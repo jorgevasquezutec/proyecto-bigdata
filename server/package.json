@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "aws-sdk": "^2.932.0",
+    "aws-serverless-express": "^3.3.8",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
