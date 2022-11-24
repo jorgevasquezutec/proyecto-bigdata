@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 import { signOut } from "next-auth/react"
 
 export default function Home({ osession }) {
-  console.log(osession)
+  // console.log(osession)
   return (
     <div>
       <Head>

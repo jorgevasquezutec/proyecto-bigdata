@@ -5,7 +5,7 @@ dotenv.config();
 
 
 const kafka = new Kafka({
-    clientId: 'my-app2',
+    clientId: 'my-app3',
     brokers: process.env.BROKERS.split(','),
 });
 
@@ -25,9 +25,9 @@ export const sendProducer = async (topic, message) => {
 export const makeConsumer = async (topic, user) => {
 
     return new Promise(async (resolve, reject) => {
-        const consumer = kafka.consumer( {groupId: 'node-app3'})
+        const consumer = kafka.consumer( {groupId: 'node-app4'})
         await consumer.connect()
-        await consumer.subscribe({ topics: topic, fromBeginning: false })
+        await consumer.subscribe({ topics: topic, fromBeginning: true })
         await consumer.run({
             eachMessage: async ({ topic, partition, message }) => {
                 try {

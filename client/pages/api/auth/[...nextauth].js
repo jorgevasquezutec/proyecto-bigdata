@@ -35,7 +35,7 @@ export const authOptions = {
       credentials: {},
       async authorize(credentials, req) {
         let data = await coreLogin(credentials);
-        console.log(data);
+        // console.log(data);
         return {
           id : data?.user._id,
           name: `${data.user.firstName} ${data.user.lastName}`,
