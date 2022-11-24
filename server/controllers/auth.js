@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import fs from "fs";
 import { promisify } from "util";
+import { sendProducer, makeConsumer } from "../config/kafka.js";
 
 const unlinkAsync = promisify(fs.unlink)
 
@@ -37,12 +38,51 @@ export const register = async (req, res) => {
     }
 };
 
+
+const processConsumer = async (consumer, user) => {
+
+    const textError = 'Error while processing video';
+
+    return new Promise(async (resolve, reject) => {
+        await consumer.run({
+            eachMessage: async ({ topic, partition, message }) => {
+                try {
+
+                    let msg = message.value;
+                    if (msg) {
+                        let event = JSON.parse(msg.toString());
+                        if (event.username === user.userName) {
+                            resolve({
+                                event: event,
+                                topic: topic,
+                                status: true
+                            })
+                        }
+                    }
+                } catch (error) {
+                    reject({
+                        status: false,
+                        error: error || textError
+                    })
+                }
+            }
+        }).catch(async e => {
+            // console.error(`[example/consumer] ${e.message}`)
+            reject({
+                status: false,
+                error: error.message || textError
+            })
+        })
+    })
+}
+
+
 /* LOGGING IN */
 export const login = async (req, res) => {
     try {
         // console.log(req.file)
         const { email, password } = req.body;
-        console.log(email, password)
+        // console.log(email, password)
         const user = await User.findOne({ email: email });
         if (!user) {
             await unlinkAsync(req.file.path);
@@ -53,9 +93,29 @@ export const login = async (req, res) => {
             await unlinkAsync(req.file.path);
             return res.status(400).json({ error: "Invalid credentials. " });
         }
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        delete user.password;
-        res.status(200).json({ token, user });
+        /* PRODUCER*/
+        await sendProducer("loginattempt", {
+            username: user.userName,
+            first_video: user.videoPath,
+            any_video: req.file.originalname,
+        });
+
+        const consumer = await makeConsumer(['checked', 'celery'])
+        const result = await processConsumer(consumer, user);
+        console.log(result.event)
+        if (result.status) {
+            await unlinkAsync(req.file.path)
+            if(result.topic === 'checked'){
+                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+                delete user.password;
+                return res.status(200).json({ token, user });
+            }
+           return res.status(4001).json({ error: "Error in video process" });
+        }
+        else {
+            throw new Error(result.error)
+        }
+
     } catch (err) {
         console.log(err);
         await unlinkAsync(req.file.path);
