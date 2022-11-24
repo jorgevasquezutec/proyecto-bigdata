@@ -35,7 +35,7 @@ export default function SingIn() {
             return;
         }
         //cuando este listo
-        // router.push('/')
+        router.push('/')
     }
 
     const onComplete = (videoBlob) => {

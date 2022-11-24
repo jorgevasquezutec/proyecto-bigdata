@@ -13,6 +13,7 @@ const coreLogin = async ({ email, password, any_video, }) => {
     const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
     formData.append("any_video", any_video, videoName);
     const res = await axios.post(`${process.env.API_URL}/auth/login`, formData);
+    // console.log(res);
     return res.data;
 
   } catch (error) {
@@ -33,7 +34,14 @@ export const authOptions = {
       type: "credentials",
       credentials: {},
       async authorize(credentials, req) {
-        return await coreLogin(credentials);
+        let data = await coreLogin(credentials);
+        console.log(data);
+        return {
+          id : data?.user._id,
+          name: `${data.user.firstName} ${data.user.lastName}`,
+          email: data?.user.email,
+          token: data?.token,
+        }
       },
     }),
   ],
@@ -44,8 +52,8 @@ export const authOptions = {
   callbacks: {
     jwt(params) {
       // update token
-      if (params.user?.role) {
-        params.token.role = params.user.role;
+      if (params.user?.token) {
+        params.token.token = params.user.token;
       }
       // return final_token
       return params.token;

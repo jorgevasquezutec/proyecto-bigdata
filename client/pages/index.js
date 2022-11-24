@@ -3,7 +3,7 @@ import { getSession } from 'next-auth/react'
 import { signOut } from "next-auth/react"
 
 export default function Home({ osession }) {
-
+  console.log(osession)
   return (
     <div>
       <Head>
@@ -37,7 +37,7 @@ export default function Home({ osession }) {
                 </div>
                 <div>
                   <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl">
-                    Bienvenido {osession?.user.name}
+                    Bienvenido {osession?.user?.name} 
                   </h1>
                   <p className="mt-6 text-lg leading-8 text-gray-600 sm:text-center">
                     Proyecto Big Data

@@ -39,42 +39,44 @@ export const register = async (req, res) => {
 };
 
 
-const processConsumer = async (consumer, user) => {
+// const processConsumer = async (consumer, user) => {
 
-    const textError = 'Error while processing video';
+//     const textError = 'Error while processing video';
 
-    return new Promise(async (resolve, reject) => {
-        await consumer.run({
-            eachMessage: async ({ topic, partition, message }) => {
-                try {
-
-                    let msg = message.value;
-                    if (msg) {
-                        let event = JSON.parse(msg.toString());
-                        if (event.username === user.userName) {
-                            resolve({
-                                event: event,
-                                topic: topic,
-                                status: true
-                            })
-                        }
-                    }
-                } catch (error) {
-                    reject({
-                        status: false,
-                        error: error || textError
-                    })
-                }
-            }
-        }).catch(async e => {
-            // console.error(`[example/consumer] ${e.message}`)
-            reject({
-                status: false,
-                error: error.message || textError
-            })
-        })
-    })
-}
+//     // return new Promise(async (resolve, reject) => {
+       
+//     // })
+//     await consumer.run({
+//         eachMessage: async ({ topic, partition, message }) => {
+//             try {
+//                 console.log(message.value)
+//                 let msg = message.value;
+//                 if (msg) {
+//                     let event = JSON.parse(msg.toString());
+//                     console.log("event", event);
+//                     if (event.username === user.userName) {
+//                         // resolve({
+//                         //     event: event,
+//                         //     topic: topic,
+//                         //     status: true
+//                         // })
+//                     }
+//                 }
+//             } catch (error) {
+//                 // reject({
+//                 //     status: false,
+//                 //     error: error || textError
+//                 // })
+//             }
+//         }
+//     }).catch(async e => {
+//         // console.error(`[example/consumer] ${e.message}`)
+//         // reject({
+//         //     status: false,
+//         //     error: error.message || textError
+//         // })
+//     })
+// }
 
 
 /* LOGGING IN */
@@ -100,9 +102,9 @@ export const login = async (req, res) => {
             any_video: req.file.originalname,
         });
 
-        const consumer = await makeConsumer(['checked', 'celery'])
-        const result = await processConsumer(consumer, user);
-        console.log(result.event)
+        const result = await makeConsumer(['checked', 'celery'], user);
+        const consumer = result?.consumer;
+        if(consumer) await consumer.disconnect();
         if (result.status) {
             await unlinkAsync(req.file.path)
             if(result.topic === 'checked'){
