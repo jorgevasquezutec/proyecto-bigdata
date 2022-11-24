@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from 'react-toastify';
 import cryptoRandomString from 'crypto-random-string';
 import { ApiRegister } from "../../services/api";
-
+import { ThreeDots } from  'react-loader-spinner'
 
 export default function SingUp() {
     const router = useRouter();
@@ -21,6 +21,7 @@ export default function SingUp() {
             first_video: null,
         }
     );
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -45,15 +46,18 @@ export default function SingUp() {
 
     const onRegister = async (payload)=> {
         try {
+            setLoading(true);
             const res = await ApiRegister(payload);
             if (res.status === 201) {
                 router.push("/auth/signin");
             }
+            setLoading(false);
         } catch (error) {
             const errorMessage = error?.response?.data?.error || "Something went wrong";
             toast.error(errorMessage, {
                 position: toast.POSITION.TOP_RIGHT
             })
+            setLoading(false);
         }
     }
 
@@ -64,6 +68,18 @@ export default function SingUp() {
 
     return (<>
         <ToastContainer />
+        <ThreeDots
+                height="80"
+                width="80"
+                radius="9"
+                color="rgb(22 163 74)"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={
+                    { position: "absolute", top: "50%", left: "50%" , zIndex: 100}
+                }
+                wrapperClassName=""
+                visible={loading}
+            />
         <main className="bg-gray-50 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 

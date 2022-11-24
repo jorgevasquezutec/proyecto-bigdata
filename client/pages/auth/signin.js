@@ -6,11 +6,14 @@ import { useRouter } from 'next/router'
 import VideoRecorder from 'react-video-recorder'
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from 'react-toastify';
+import { ThreeDots } from  'react-loader-spinner'
+
 
 
 export default function SingIn() {
 
     const [userInfo, setUserInfo] = useState({ email: "", password: "", any_video: null })
+    const [loading, setLoading] = useState(false)
     const router = useRouter()
 
     const handleSubmit = async (e) => {
@@ -21,12 +24,14 @@ export default function SingIn() {
                 position: toast.POSITION.TOP_RIGHT
             })
             return;
-        } 
-        
+        }
+
+        setLoading(true)
         const res = await signIn('credentials', {
             ...userInfo,
             redirect: false
         })
+        setLoading(false)
         console.log(res);
         if (!res.ok) {
             toast.error(res.error, {
@@ -47,6 +52,18 @@ export default function SingIn() {
     return (
         <>
             <ToastContainer />
+            <ThreeDots
+                height="80"
+                width="80"
+                radius="9"
+                color="rgb(79 70 229)"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={
+                    { position: "absolute", top: "50%", left: "50%" , zIndex: 100}
+                }
+                wrapperClassName=""
+                visible={loading}
+            />
             <main className="bg-gray-50 dark:bg-gray-900">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
