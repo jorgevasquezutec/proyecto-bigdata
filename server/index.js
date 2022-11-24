@@ -8,7 +8,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { register } from './controllers/auth.js';
+import { register, login } from './controllers/auth.js';
 
 
 
@@ -24,13 +24,13 @@ app.use(morgan('common'));
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
-app.use('/assets', express.static(path.join(__dirname, 'public/assets')));
+app.use('/videos', express.static(path.join(__dirname, 'public/videos')));
 
 
 /*FILE STORAGE */
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/assets');
+        cb(null, 'public/videos');
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -41,8 +41,8 @@ const upload = multer({ storage: storage });
 
 /*ROUTERS*/
 
-app.post("/auth/signup", upload.single("video"), register)
-
+app.post("/auth/signup", upload.single("first_video"), register)
+app.use("/auth/login", upload.single("any_video"), login);
 
 /* MNGOOSE SETUP*/
 const PORT = process.env.PORT || 6001;

@@ -1,5 +1,27 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
+import axios from "axios";
+import FormData from "form-data";
+import cryptoRandomString from 'crypto-random-string';
+
+
+const coreLogin = async ({ email, password, any_video, }) => {
+  try {
+    const formData = new FormData();
+    formData.append("email",email);
+    formData.append("password",password);
+    const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
+    formData.append("any_video", any_video, videoName);
+    const res = await axios.post(`${process.env.API_URL}/auth/login`, formData);
+    return res.data;
+
+  } catch (error) {
+    const errorMessage = error?.response?.data?.error || "Something went wrong";
+    throw new Error(errorMessage);
+  }
+}
+
+
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -11,18 +33,7 @@ export const authOptions = {
       type: "credentials",
       credentials: {},
       async authorize(credentials, req) {
-        const { email, password } = credentials;
-        if (email !== "john@gmail.com" || password !== "1234") {
-          throw new Error("invalid credentials");
-        }
-
-        // if everything is fine
-        return {
-          id: "1234",
-          name: "John Doe",
-          email: "john@gmail.com",
-          role: "admin",
-        };
+        return await coreLogin(credentials);
       },
     }),
   ],

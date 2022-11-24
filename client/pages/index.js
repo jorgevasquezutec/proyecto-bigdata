@@ -17,7 +17,7 @@ export default function Home({ osession }) {
           <div>
             <nav className="flex h-9 items-center justify-between" aria-label="Global">
 
-              <div className="hidden lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
+              <div className="lg:flex lg:min-w-0 lg:flex-1 lg:justify-end">
                 <a
                   onClick={() => { signOut() }}
                   className="inline-block rounded-lg px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm ring-1 ring-gray-900/10 hover:ring-gray-900/20"

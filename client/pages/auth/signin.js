@@ -5,44 +5,48 @@ import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import VideoRecorder from 'react-video-recorder'
 import "react-toastify/dist/ReactToastify.css";
-
+import { toast, ToastContainer } from 'react-toastify';
 
 
 export default function SingIn() {
 
-    const [userInfo, setUserInfo] = useState({ email: "", password: "", video: null })
+    const [userInfo, setUserInfo] = useState({ email: "", password: "", any_video: null })
     const router = useRouter()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         // console.log(userInfo)
+        if (!userInfo.any_video) {
+            toast.error("You must record a video", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+            return;
+        } 
+        
         const res = await signIn('credentials', {
-            email: userInfo.email,
-            password: userInfo.password,
-            any_video : userInfo.video,
+            ...userInfo,
             redirect: false
         })
-        // console.log(res)
-        if (res.status == 200) {
-            router.push('/')
+        console.log(res);
+        if (!res.ok) {
+            toast.error(res.error, {
+                position: toast.POSITION.TOP_RIGHT
+            })
+            return;
         }
+        //cuando este listo
+        // router.push('/')
     }
 
     const onComplete = (videoBlob) => {
         console.log("videoBlob", videoBlob)
-        // const urlObject = window.URL.createObjectURL(videoBlob);
-        // const link = document.createElement('a');
-        // link.href = urlObject;
-        // link.setAttribute('download', 'recording2');
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
-        setRegister({ ...userInfo, video: videoBlob })
+        setUserInfo({ ...userInfo, any_video: videoBlob })
     }
 
 
     return (
         <>
+            <ToastContainer />
             <main className="bg-gray-50 dark:bg-gray-900">
                 <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
                     <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">

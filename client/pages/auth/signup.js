@@ -3,6 +3,11 @@ import { useRouter } from "next/router"
 import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid'
 import { useState } from "react";
 import VideoRecorder from 'react-video-recorder'
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from 'react-toastify';
+import cryptoRandomString from 'crypto-random-string';
+import { ApiRegister } from "../../services/api";
+
 
 export default function SingUp() {
     const router = useRouter();
@@ -17,25 +22,48 @@ export default function SingUp() {
         }
     );
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("entro")
-        console.log(register)
-        // router.push('/auth/signin')
+        if (!register.first_video) {
+            toast.error("You must record a video", {
+                position: toast.POSITION.TOP_RIGHT
+            });
+            return;
+        }
+        const formData = new FormData();
+        const keys = Object.keys(register);
+        const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
+        for (let value in keys) {
+            let index = keys[value];
+            if (index === "first_video") {
+                formData.append("first_video", register.first_video, videoName);
+            } else formData.append(index, register[index]);
+        }
+        formData.append("videoPath", videoName);
+        onRegister(formData);
     }
+
+    const onRegister = async (payload)=> {
+        try {
+            const res = await ApiRegister(payload);
+            if (res.status === 201) {
+                router.push("/auth/signin");
+            }
+        } catch (error) {
+            const errorMessage = error?.response?.data?.error || "Something went wrong";
+            toast.error(errorMessage, {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        }
+    }
+
     const onComplete = (videoBlob) => {
         console.log("videoBlob", videoBlob)
-        // const urlObject = window.URL.createObjectURL(videoBlob);
-        // const link = document.createElement('a');
-        // link.href = urlObject;
-        // link.setAttribute('download', 'recording2');
-        // document.body.appendChild(link);
-        // link.click();
-        // document.body.removeChild(link);
         setRegister({ ...register, first_video: videoBlob })
     }
 
     return (<>
+        <ToastContainer />
         <main className="bg-gray-50 dark:bg-gray-900">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
 
