@@ -5,9 +5,13 @@ services:
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+        - bigdata_proyecto_network
   kafka1:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-server:7.2.1
     container_name: kafka1
+    hostname: kafka1
     ports:
       - "8097:8097"
     depends_on:
@@ -18,9 +22,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8097,INTERNAL://kafka1:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_JMX_HOSTNAME: kafka1
+    networks:
+      - bigdata_proyecto_network
   kafka2:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-server:7.2.1
     container_name: kafka2
+    hostname: kafka2
     ports:
       - "8098:8098"
     depends_on:
@@ -31,9 +39,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8098,INTERNAL://kafka2:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_JMX_HOSTNAME: kafka2
+    networks:
+      - bigdata_proyecto_network
   kafka3:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-server:7.2.1
     container_name: kafka3
+    hostname: kafka3
     ports:
       - "8099:8099"
     depends_on:
@@ -44,9 +56,13 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8099,INTERNAL://kafka3:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_JMX_HOSTNAME: kafka3
+    networks:
+      - bigdata_proyecto_network
   kafka4:
-    image: confluentinc/cp-kafka:7.2.1
+    image: confluentinc/cp-server:7.2.1
     container_name: kafka4
+    hostname: kafka4
     ports:
       - "8100:8100"
     depends_on:
@@ -57,3 +73,58 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8100,INTERNAL://kafka4:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_JMX_HOSTNAME: kafka4
+    networks:
+      - bigdata_proyecto_network
+  mongodb:
+    image: mongo
+    container_name: mongodb-spoofing
+    environment:
+      MONGO_INITDB_ROOT_USERNAME : root
+      MONGO_INITDB_ROOT_PASSWORD : pass12345
+      MONGO_INITDB_DATABASE: spoofing
+    volumes:
+      - mongodb-spoofing-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - bigdata_proyecto_network
+    ports:
+      - 27017:27017
+  kafka-init-topics:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka4
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+               cub kafka-ready -b kafka1:9092 1 30 && \
+               cub kafka-ready -b kafka2:9092 1 30 && \
+               cub kafka-ready -b kafka3:9092 1 30 && \
+               cub kafka-ready -b kafka4:9092 1 30 && \
+               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic loginattempt --partitions 3 --replication-factor 1 --if-not-exists  && \
+               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic filtered --partitions 3 --replication-factor 1 --if-not-exists  && \
+               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic celery --partitions 3 --replication-factor 1 --if-not-exists && \
+               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic checked --partitions 3 --replication-factor 1 --if-not-exists'"
+    networks:
+      - bigdata_proyecto_network
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092
+    networks:
+      - bigdata_proyecto_network
+      
+volumes:
+  mongodb-spoofing-data:
+    name: mongodb-spoofing-data
+
+networks:
+  bigdata_proyecto_network:
+    name: bigdata_proyecto_network
+    driver: bridge
