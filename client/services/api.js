@@ -19,3 +19,14 @@ export const ApiRegister = async (paylaod) => {
         }
     })
 }
+
+export const ApiLogin = async (paylaod) => {
+    return new Promise(async(resolve, reject) => {
+        try {
+            const res = await axios.post(`${API_URL}/auth/login`, paylaod)
+            resolve(res)
+        } catch (error) {
+            reject(error)
+        }
+    })
+}

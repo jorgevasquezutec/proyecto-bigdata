@@ -150,7 +150,7 @@ export default function SingUp() {
                                 <VideoRecorder
                                     isOnInitially={true}
                                     onRecordingComplete={(videoBlob) => onComplete(videoBlob)}
-                                    isFlipped={true}
+                                    // isFlipped={true}
                                     countdownTime={3000}
                                     timeLimit={5000}
                                 />

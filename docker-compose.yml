@@ -8,10 +8,12 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     networks:
         - bigdata_proyecto_network
+    tmpfs: "/datalog"
   kafka1:
     image: confluentinc/cp-server:7.2.1
     container_name: kafka1
     hostname: kafka1
+    restart: always
     ports:
       - "8097:8097"
     depends_on:
@@ -29,6 +31,7 @@ services:
     image: confluentinc/cp-server:7.2.1
     container_name: kafka2
     hostname: kafka2
+    restart: always
     ports:
       - "8098:8098"
     depends_on:
@@ -46,6 +49,7 @@ services:
     image: confluentinc/cp-server:7.2.1
     container_name: kafka3
     hostname: kafka3
+    restart: always
     ports:
       - "8099:8099"
     depends_on:
@@ -63,6 +67,7 @@ services:
     image: confluentinc/cp-server:7.2.1
     container_name: kafka4
     hostname: kafka4
+    restart: always
     ports:
       - "8100:8100"
     depends_on:

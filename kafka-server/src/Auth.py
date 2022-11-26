@@ -10,7 +10,7 @@ class Auth:
         servers = os.getenv('BROKERS')
         self.confConsumer = {
             'bootstrap.servers': servers,
-            'group.id': 'auth2',
+            'group.id': 'auth',
             'max.poll.interval.ms': '500000',
             'session.timeout.ms': '120000'
         }

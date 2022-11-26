@@ -7,8 +7,33 @@ import VideoRecorder from 'react-video-recorder'
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from 'react-toastify';
 import { ThreeDots } from  'react-loader-spinner'
+import cryptoRandomString from 'crypto-random-string';
+import { ApiLogin } from '../../services/api'
 
 
+const coreLogin = async ({ email, password, any_video }) => {
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("password", password);
+      const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
+      formData.append("any_video", any_video, videoName);
+      const res = await ApiLogin(formData);
+      // console.log(res);
+      return {
+        ...res.data,
+        status: true
+      };
+  
+    } catch (error) {
+      const errorMessage = error?.response?.data?.error || "Something went wrong";
+      return {
+        error: errorMessage,
+        status: false,
+      }
+    }
+  }
+  
 
 export default function SingIn() {
 
@@ -27,8 +52,17 @@ export default function SingIn() {
         }
 
         setLoading(true)
+        const data = await coreLogin(userInfo);
+        if(!data.status){
+            toast.error(data.error, {
+                position: toast.POSITION.TOP_RIGHT
+            })
+            return;
+        }
         const res = await signIn('credentials', {
-            ...userInfo,
+            ...data.user,
+            token: data.token,
+            // any_video: test,
             redirect: false
         })
         setLoading(false)
@@ -45,6 +79,7 @@ export default function SingIn() {
 
     const onComplete = (videoBlob) => {
         console.log("videoBlob", videoBlob)
+        console.log("videoBlob", videoBlob.size)
         setUserInfo({ ...userInfo, any_video: videoBlob })
     }
 
@@ -94,7 +129,7 @@ export default function SingIn() {
                                     <VideoRecorder
                                         isOnInitially={true}
                                         onRecordingComplete={(videoBlob) => onComplete(videoBlob)}
-                                        isFlipped={true}
+                                        // isFlipped={true}
                                         countdownTime={3000}
                                         timeLimit={5000}
                                     />

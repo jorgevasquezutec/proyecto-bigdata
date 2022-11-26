@@ -83,7 +83,7 @@ export const login = async (req, res) => {
         if (consumer) await consumer.disconnect();
 
         /*Delete any_video s3*/
-        await deleteFile(any_video_key);
+        // await deleteFile(any_video_key);
 
         /*response to client*/
         if (result.status) {
@@ -102,7 +102,6 @@ export const login = async (req, res) => {
     } catch (err) {
         console.log(err);
         await removePath(req.file.path);
-        // await unlinkAsync(req.file.path,(err)=>{console.log(err)});
         res.status(500).json({ error: err.message });
     }
 };

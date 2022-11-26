@@ -7,3 +7,4 @@ matplotlib==3.6.0
 confluent_kafka
 seaborn==0.12.1
 ipykernel
+face_recognition

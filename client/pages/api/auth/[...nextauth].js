@@ -1,27 +1,5 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials"
-import axios from "axios";
-import FormData from "form-data";
-import cryptoRandomString from 'crypto-random-string';
-
-
-const coreLogin = async ({ email, password, any_video, }) => {
-  try {
-    const formData = new FormData();
-    formData.append("email",email);
-    formData.append("password",password);
-    const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
-    formData.append("any_video", any_video, videoName);
-    const res = await axios.post(`${process.env.API_URL}/auth/login`, formData);
-    // console.log(res);
-    return res.data;
-
-  } catch (error) {
-    const errorMessage = error?.response?.data?.error || "Something went wrong";
-    throw new Error(errorMessage);
-  }
-}
-
 
 
 export const authOptions = {
@@ -33,15 +11,19 @@ export const authOptions = {
     CredentialsProvider({
       type: "credentials",
       credentials: {},
-      async authorize(credentials, req) {
-        let data = await coreLogin(credentials);
-        // console.log(data);
+      async authorize(data, req) {
+        if(!data?._id) throw new Error("Something went wrong");
         return {
-          id : data?.user._id,
-          name: `${data.user.firstName} ${data.user.lastName}`,
-          email: data?.user.email,
+          id : data?._id,
+          name: `${data.firstName} ${data.lastName}`,
+          email: data?.email,
           token: data?.token,
         }
+        // return {
+        //   id: "1",
+        //   name: "John Doe",
+        //   email: "test@email.com"
+        // }
       },
     }),
   ],
