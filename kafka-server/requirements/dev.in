@@ -1,21 +1,3 @@
 -c prod.txt
-bandit
-black
-editdistance
-itermplot
-matplotlib
-mypy
-nltk
-pycodestyle
-pydocstyle
-pylint
-pytest
-pyyaml
-safety
-scipy
-pillow
-statsmodels
-drawnow
 python-dotenv
 opencv-python
-# wandb

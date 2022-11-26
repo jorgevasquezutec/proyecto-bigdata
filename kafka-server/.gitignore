@@ -3,3 +3,5 @@
 /datasets
 # .env
 .env
+datasets/**
+models/**

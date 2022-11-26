@@ -1,9 +1,12 @@
-# paso1: Levantar docker kafka
+
+# Soft real time anti spoofing
 
 
-```python
-docker-compose up -d
-```
+![alt text](proyecto.png)
+
+
+[Dataset](https://www.dropbox.com/s/aaz282d9wyst0w8/CASIA_faceAntisp.rar
+)
 
 
 NOTA: si no tienes instalado nodemon ejecuta
@@ -12,49 +15,52 @@ NOTA: si no tienes instalado nodemon ejecuta
  npm i -g nodemon
 ```
 
+---
 
-# paso2:  levantar spoofing-kafka-server
+## Paso 1: Levantar docker:kafka,kafaui,mongo,kafa-topic-init
+
+```python
+docker-compose up -d
+```
 
 
-## create env
+---
+## Paso 2:  levantar spoofing-kafka-server
+
+
+### create env
 
 ```python
 conda env create -f environment.yml
 ```
 
-## activate env
+### activate env
 
 ```python
 conda activate spoofing-kafka
 ```
 
-## install dependencys
+### install dependencys
 
 ```python
 make pip-tools
 ```
 
-
-## ejecutar la configuracion incial
-
-```python
-  cd kafka-sever/src && jupyter nbconvert --execute --to notebook Admin.ipynb
-```
-
-## ejecutar Auth
+### ejecutar Auth
 
 ```python
-  cd kafka-sever/src && python Auth.py
+cd kafka-sever/src && python Auth.py
 ```
 
-## ejecutar 
+### ejecutar FakeDetector
 
 ```python
-  cd kafka-sever/src && python Auth.py
+cd kafka-sever/src && python Auth.py
 ```
 
+---
 
-# paso3: Levantar server
+## Paso 3: Levantar server
 
 ### instalar dependencias
 
@@ -70,7 +76,8 @@ cd server && nodemon index.js
 
 ```
 
-# paso 4 : Levantar front
+---
+## Paso 4 : Levantar front
 
 
 ### instalar dependencias
