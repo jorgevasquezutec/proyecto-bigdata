@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from 'react-toastify';
 import cryptoRandomString from 'crypto-random-string';
 import { ApiRegister } from "../../services/api";
-import { ThreeDots } from  'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 
 export default function SingUp() {
     const router = useRouter();
@@ -44,7 +44,7 @@ export default function SingUp() {
         onRegister(formData);
     }
 
-    const onRegister = async (payload)=> {
+    const onRegister = async (payload) => {
         try {
             setLoading(true);
             const res = await ApiRegister(payload);
@@ -69,19 +69,19 @@ export default function SingUp() {
     return (<>
         <ToastContainer />
         <ThreeDots
-                height="80"
-                width="80"
-                radius="9"
-                color="rgb(22 163 74)"
-                ariaLabel="three-dots-loading"
-                wrapperStyle={
-                    { position: "absolute", top: "50%", left: "50%" , zIndex: 100}
-                }
-                wrapperClassName=""
-                visible={loading}
-            />
-        <main className="bg-gray-50 dark:bg-gray-900">
-            <div className="flex flex-col items-center justify-center px-4 py-4 mx-auto">
+            height="80"
+            width="80"
+            radius="9"
+            color="rgb(22 163 74)"
+            ariaLabel="three-dots-loading"
+            wrapperStyle={
+                { position: "absolute", top: "50%", left: "50%", zIndex: 100 }
+            }
+            wrapperClassName=""
+            visible={loading}
+        />
+        <main className="flex bg-gray-50 dark:bg-gray-900">
+            <div className="flex  w-full flex-col items-center justify-center px-4 py-4 mx-auto">
                 <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md dark:bg-gray-800 dark:border-gray-700">
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
                         <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">

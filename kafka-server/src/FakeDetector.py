@@ -14,11 +14,11 @@ class FakeDetector:
             'group.id': 'fake-detector',
             'max.poll.interval.ms': '500000',
             'session.timeout.ms': '120000',
-            'request.timeout.ms': '120000'
         }
         self.confProducer = {
             'bootstrap.servers': servers,
             'client.id': socket.gethostname()+'-fake-detector',
+            'request.timeout.ms': '120000'
         }
         self.producer = Producer(self.confProducer)
 

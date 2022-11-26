@@ -39,45 +39,6 @@ export const register = async (req, res) => {
 };
 
 
-// const processConsumer = async (consumer, user) => {
-
-//     const textError = 'Error while processing video';
-
-//     // return new Promise(async (resolve, reject) => {
-       
-//     // })
-//     await consumer.run({
-//         eachMessage: async ({ topic, partition, message }) => {
-//             try {
-//                 console.log(message.value)
-//                 let msg = message.value;
-//                 if (msg) {
-//                     let event = JSON.parse(msg.toString());
-//                     console.log("event", event);
-//                     if (event.username === user.userName) {
-//                         // resolve({
-//                         //     event: event,
-//                         //     topic: topic,
-//                         //     status: true
-//                         // })
-//                     }
-//                 }
-//             } catch (error) {
-//                 // reject({
-//                 //     status: false,
-//                 //     error: error || textError
-//                 // })
-//             }
-//         }
-//     }).catch(async e => {
-//         // console.error(`[example/consumer] ${e.message}`)
-//         // reject({
-//         //     status: false,
-//         //     error: error.message || textError
-//         // })
-//     })
-// }
-
 
 /* LOGGING IN */
 export const login = async (req, res) => {

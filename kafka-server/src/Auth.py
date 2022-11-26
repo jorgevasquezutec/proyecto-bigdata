@@ -12,12 +12,12 @@ class Auth:
             'bootstrap.servers': servers,
             'group.id': 'auth2',
             'max.poll.interval.ms': '500000',
-            'session.timeout.ms': '120000',
-            'request.timeout.ms': '120000'
+            'session.timeout.ms': '120000'
         }
         self.confProducer = {
             'bootstrap.servers': servers,
             'client.id': socket.gethostname()+'-auth',
+            'request.timeout.ms': '120000'
         }
         self.producer = Producer(self.confProducer)
 

@@ -25,7 +25,7 @@ export const sendProducer = async (topic, message) => {
 export const makeConsumer = async (topic, user) => {
 
     return new Promise(async (resolve, reject) => {
-        const consumer = kafka.consumer( {groupId: 'node-app4'})
+        const consumer = kafka.consumer( {groupId: `consumer-${user._id}`})
         await consumer.connect()
         await consumer.subscribe({ topics: topic, fromBeginning: true })
         await consumer.run({
