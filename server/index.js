@@ -9,6 +9,7 @@ import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { register, login } from './controllers/auth.js';
+import { getFile } from './controllers/util.js';
 
 
 /*CONFIGURATIONS*/
@@ -42,6 +43,7 @@ const upload = multer({ storage: storage });
 
 app.post("/auth/signup", upload.single("first_video"), register)
 app.use("/auth/login", upload.single("any_video"), login);
+app.get("/videos/:key", getFile);
 
 /* MNGOOSE SETUP*/
 const PORT = process.env.PORT || 6001;
