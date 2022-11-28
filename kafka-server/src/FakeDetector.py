@@ -9,10 +9,37 @@ import numpy as np
 import cv2
 from dotenv import load_dotenv
 from typing import List, Dict, Union
+from torch.utils.data import DataLoader, Dataset
+from torchvision import transforms
+from PIL import Image
+
 IMG_SIZE: int = 224
 NUM_FRAMES_PER_VIDEO: int = 16
+targets: Dict[str, int] = {"1": 0, "2": 0, "3": 1, "4": 1, "5": 2, "6": 2, \
+    "7": 3, "8": 3, "HR_1": 0, "HR_2": 1, "HR_3": 2, "HR_4": 3}
 
 load_dotenv()
+
+class MyDataset(Dataset):
+    def __init__(self, list_IDs, labels):
+        self.list_IDs = list_IDs
+        self.labels = labels
+
+    def __len__(self):
+        return len(self.list_IDs)
+
+    def __getitem__(self, index):
+        # Select sample
+        ID = self.list_IDs[index]
+
+        # Load data and get label
+        preprocess = transforms.Compose([
+                transforms.ToTensor(),
+                transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+        ])
+        X = preprocess(Image.fromarray(ID))
+        y = self.labels[index]
+        return X, y
 
 def video2frames(video_path: str, resize: Union[int, int] = (IMG_SIZE, IMG_SIZE)) -> np.array:
     cap = cv2.VideoCapture(video_path)
@@ -65,8 +92,23 @@ class FakeDetector:
         model.fc = nn.Linear(in_features=512, out_features=4, bias=True)
         model.load_state_dict(torch.load("../models/resnet18_5.pt"))
         model.to(device)
-        outputs = model(video2frames(any_video))
-        _, predicted = torch.max(outputs.data, 1)
+        frames = video2frames(any_video)
+        dataset_x = [*dataset_x, *frames]
+        dataset_x = np.array(dataset_x)
+        vector_path: List[str] = f.split("\\")
+        tmp = [targets[vector_path[-1][:-4]]]*NUM_FRAMES_PER_VIDEO
+        dataset_y = [*dataset_y, *tmp]
+        tensor_y_test = torch.as_tensor(dataset_y)
+        data_test: MyDataset = MyDataset(dataset_x, tensor_y_test)
+        test_loader: DataLoader = DataLoader(dataset=data_test, shuffle=False)
+        print(len(test_loader))
+        for images, labels in test_loader:
+            images = images.to(device)
+            labels = labels.to(device)
+            outputs = model(images)
+            _, predicted = torch.max(outputs.data, 1)
+        # outputs = model(video2frames(any_video))
+        # _, predicted = torch.max(outputs.data, 1)
         return predicted == 0
 
     def consume(self, topic):
