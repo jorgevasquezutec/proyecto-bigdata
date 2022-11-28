@@ -12,6 +12,7 @@ from typing import List, Dict, Union
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from PIL import Image
+from scipy import stats as st
 
 IMG_SIZE: int = 224
 NUM_FRAMES_PER_VIDEO: int = 16
@@ -59,7 +60,8 @@ def video2frames(video_path: str, resize: Union[int, int] = (IMG_SIZE, IMG_SIZE)
             # resize
             frame = cv2.resize(frame, resize)
             frames.append(frame)
-    assert len(frames)==NUM_FRAMES_PER_VIDEO
+    #assert len(frames)==NUM_FRAMES_PER_VIDEO
+    print("video2frames: ", len(frames))
     return np.array(frames)
 
 class FakeDetector:
@@ -71,6 +73,7 @@ class FakeDetector:
             'max.poll.interval.ms': '500000',
             'session.timeout.ms': '120000',
         }
+
         self.confProducer = {
             'bootstrap.servers': servers,
             'client.id': socket.gethostname()+'-fake-detector',
@@ -83,29 +86,41 @@ class FakeDetector:
         self.producer.flush()
 
     def filtered(self, msg):
-        event = json.loads(msg.decode('utf-8'))
-        any_video = event['any_video']
-        model = torchvision.models.resnet18(pretrained=True)
-        for e in model.parameters():
-            e.requires_grad = False
-        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-        model.fc = nn.Linear(in_features=512, out_features=4, bias=True)
-        model.load_state_dict(torch.load("../models/resnet18_5.pt"))
-        model.to(device)
-        frames = video2frames(any_video)
-        dataset_x = [*dataset_x, *frames]
-        dataset_x = np.array(dataset_x)
-        tensor_y_test = torch.as_tensor("1")
-        data_test: MyDataset = MyDataset(dataset_x, tensor_y_test)
-        test_loader: DataLoader = DataLoader(dataset=data_test, shuffle=False)
-        print(len(test_loader))
-        for images, _ in test_loader:
-            images = images.to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-        # outputs = model(video2frames(any_video))
-        # _, predicted = torch.max(outputs.data, 1)
-        return predicted == 0
+        try:
+            # URL = 'http://localhost:3001/videos/'
+            # video ='6xfgIsjz2EAF4zij1TN6YSeLVjHa9AnH5Qo3URnfbvMGCZ2IgMpTd8qKHVWOozPN.webm'
+            event = json.loads(msg.decode('utf-8'))
+            any_video = event['any_video']
+            print(any_video)
+            model = torchvision.models.resnet18(pretrained=True)
+            for e in model.parameters():
+                e.requires_grad = False
+            device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+            print(device)
+            model.fc = nn.Linear(in_features=512, out_features=4, bias=True)
+            model.load_state_dict(torch.load("../models/resnet18_5.pt"))
+            model.to(device)
+            frames = video2frames(any_video)
+            print("frames",frames)
+            # print(len(frames))
+            dataset_x = []
+            dataset_x = [*dataset_x, *frames]
+            dataset_x = np.array(dataset_x)
+            tensor_y_test = torch.as_tensor(np.array([0 for i in range(16)]))
+            data_test: MyDataset = MyDataset(dataset_x, tensor_y_test)
+            test_loader: DataLoader = DataLoader(dataset=data_test, shuffle=False)
+            print("test_loader", len(test_loader))
+            res = []
+            for images, _ in test_loader:
+                images = images.to(device)
+                outputs = model(images)
+                _, predicted = torch.max(outputs.data, 1)
+                res.append(np.array(predicted.cpu())[0])
+            print(res)
+            return False
+        except Exception as e:
+            print(e)
+            return False
 
     def consume(self, topic):
         self.consumer = Consumer(self.confConsumer)

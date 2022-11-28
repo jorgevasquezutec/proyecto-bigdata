@@ -54,6 +54,7 @@ export default function SingIn() {
         setLoading(true)
         const data = await coreLogin(userInfo);
         if(!data.status){
+            setLoading(false)
             toast.error(data.error, {
                 position: toast.POSITION.TOP_RIGHT
             })
