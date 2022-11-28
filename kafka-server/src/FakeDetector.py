@@ -43,6 +43,7 @@ class MyDataset(Dataset):
         return X, y
 
 def video2frames(video_path: str, resize: Union[int, int] = (IMG_SIZE, IMG_SIZE)) -> np.array:
+    print("video2frames")
     cap = cv2.VideoCapture(video_path)
     frames: list = []
     is_there_frame: bool = True
@@ -101,7 +102,7 @@ class FakeDetector:
             model.load_state_dict(torch.load("../models/resnet18_5.pt"))
             model.to(device)
             frames = video2frames(any_video)
-            print("frames",frames)
+            # print("frames",frames)
             # print(len(frames))
             dataset_x = []
             dataset_x = [*dataset_x, *frames]
@@ -109,15 +110,15 @@ class FakeDetector:
             tensor_y_test = torch.as_tensor(np.array([0 for i in range(16)]))
             data_test: MyDataset = MyDataset(dataset_x, tensor_y_test)
             test_loader: DataLoader = DataLoader(dataset=data_test, shuffle=False)
-            print("test_loader", len(test_loader))
+            # print("test_loader", len(test_loader))
             res = []
             for images, _ in test_loader:
                 images = images.to(device)
                 outputs = model(images)
                 _, predicted = torch.max(outputs.data, 1)
                 res.append(np.array(predicted.cpu())[0])
-            print(res)
-            return False
+            # print(res)
+            return st.mode(res).mode[0] == 0
         except Exception as e:
             print(e)
             return False

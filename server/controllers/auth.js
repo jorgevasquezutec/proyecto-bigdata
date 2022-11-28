@@ -73,8 +73,8 @@ export const login = async (req, res) => {
         /*Send payload to kafka*/
         await sendProducer("loginattempt", {
             username: user.userName,
-            first_video: `${process.env.API_URL}/video/${user.videoPath}`,
-            any_video: `${process.env.API_URL}/video/${any_video_key}`,
+            first_video: `${process.env.API_URL}/videos/${user.videoPath}`,
+            any_video: `${process.env.API_URL}/videos/${any_video_key}`,
         });
 
         /*Receive payload from kafka*/
