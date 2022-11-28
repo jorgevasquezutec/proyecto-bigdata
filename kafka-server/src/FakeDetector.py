@@ -95,16 +95,12 @@ class FakeDetector:
         frames = video2frames(any_video)
         dataset_x = [*dataset_x, *frames]
         dataset_x = np.array(dataset_x)
-        vector_path: List[str] = f.split("\\")
-        tmp = [targets[vector_path[-1][:-4]]]*NUM_FRAMES_PER_VIDEO
-        dataset_y = [*dataset_y, *tmp]
-        tensor_y_test = torch.as_tensor(dataset_y)
+        tensor_y_test = torch.as_tensor("1")
         data_test: MyDataset = MyDataset(dataset_x, tensor_y_test)
         test_loader: DataLoader = DataLoader(dataset=data_test, shuffle=False)
         print(len(test_loader))
-        for images, labels in test_loader:
+        for images, _ in test_loader:
             images = images.to(device)
-            labels = labels.to(device)
             outputs = model(images)
             _, predicted = torch.max(outputs.data, 1)
         # outputs = model(video2frames(any_video))
