@@ -49,13 +49,13 @@ make pip-tools
 ### ejecutar Auth
 
 ```python
-cd kafka-sever/src && python Auth.py
+cd kafka-server/src && python Auth.py
 ```
 
 ### ejecutar FakeDetector
 
 ```python
-cd kafka-sever/src && python Auth.py
+cd kafka-server/src && python Auth.py
 ```
 
 ---
