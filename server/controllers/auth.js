@@ -83,7 +83,7 @@ export const login = async (req, res) => {
         if (consumer) await consumer.disconnect();
 
         /*Delete any_video s3*/
-        // await deleteFile(any_video_key);
+        await deleteFile(any_video_key);
 
         /*response to client*/
         if (result.status) {

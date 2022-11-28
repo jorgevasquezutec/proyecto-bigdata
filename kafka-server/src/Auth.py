@@ -1,20 +1,4 @@
-from confluent_kafka import Consumer, Producer
-import json
-import socket
-import os
-import cv2
-import numpy as np
-import face_recognition
-from dotenv import load_dotenv
-load_dotenv()
-from PIL import Image, ImageDraw
-from IPython.display import display
-
-IMG_SIZE: int = 224
-NUM_FRAMES_PER_VIDEO: int = 16
-IMG_SIZE: int = 224
-URL = 'http://localhost:3001/videos/'
-
+from lib import *
 class Auth:
     def __init__(self):
         servers = os.getenv('BROKERS')
@@ -38,43 +22,17 @@ class Auth:
     def check(self, msg):
         event = json.loads(msg.decode('utf-8'))
         print(event)
-        # user = msg['user']
-        # any_video = msg['any_video']
-        # first_video = msg['first_video']
         cvideo = msg['first_video']
-
-        cap = cv2.VideoCapture(cvideo)
-        
-
-        frames: list = []
-        is_there_frame: bool = True
-        num_total_frames = cap.get(cv2.CAP_PROP_FRAME_COUNT)
-        resampling_rate: int = int(num_total_frames / NUM_FRAMES_PER_VIDEO)
-        idf: int = 0
-
-        while is_there_frame and len(frames) < NUM_FRAMES_PER_VIDEO:
-            idf += 1
-            is_there_frame, frame = cap.read()
-            if idf % resampling_rate == 0:
-                # grayscale
-                # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                # resize
-                # frame = cv2.resize(frame, (height, width))
-                frames.append(frame)
-
-        face_lo = face_recognition.face_encodings(frames[0])[0]
-        face_lo2 = face_recognition.face_encodings(frames[10])[0]
+        svideo = msg['any_video']
+        #16 FRAMES
+        frameCvideo = BasicUtil.video2framesSR(cvideo)
+        frameSvideo = BasicUtil.video2framesSR(svideo)
+        face_lo = face_recognition.face_encodings(frameCvideo[0])[0]
+        face_lo2 = face_recognition.face_encodings(frameSvideo[0])[0]
 
         matches = face_recognition.compare_faces([face_lo], face_lo2)
-
-        # pil_image = Image.fromarray(frames[0])
-        # pil_image1 = Image.fromarray(frames[1])
-        # display(pil_image)
-        # display(pil_image1)
-
-        return matches
+        return matches[0]
         
-
     def consume(self, topic):
         self.consumer = Consumer(self.confConsumer)
         self.topic = topic
