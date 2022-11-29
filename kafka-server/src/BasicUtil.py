@@ -1,4 +1,3 @@
-
 import cv2
 from typing import Union
 import numpy as np
@@ -58,3 +57,9 @@ class BasicUtil:
         #assert len(frames)==NUM_FRAMES_PER_VIDEO
         print("video2frames: ", len(frames))
         return np.array(frames)
+
+# URL = 'http://localhost:3001/videos/'
+# video ='6xfgIsjz2EAF4zij1TN6YSeLVjHa9AnH5Qo3URnfbvMGCZ2IgMpTd8qKHVWOozPN.webm'
+# # event = json.loads(msg.decode('utf-8'))
+# any_video = URL+video
+# frames = BasicUtil.video2frames(any_video)

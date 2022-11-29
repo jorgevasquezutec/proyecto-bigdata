@@ -1,4 +1,4 @@
-from confluent_kafka import Consumer, Producer
+# from confluent_kafka import Consumer, Producer
 import json
 import os
 import socket
@@ -16,7 +16,7 @@ from scipy import stats as st
 
 
 import numpy as np
-import face_recognition
+# import face_recognition
 from PIL import Image, ImageDraw
 from IPython.display import display
 from BasicUtil import BasicUtil
