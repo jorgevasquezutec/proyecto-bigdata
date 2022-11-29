@@ -33,12 +33,12 @@ class FakeDetector:
             for e in model.parameters():
                 e.requires_grad = False
             device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-            print(device)
+            # print(device)
             model.fc = nn.Linear(in_features=512, out_features=4, bias=True)
-            model.load_state_dict(torch.load("../models/resnet18_5.pt"))
+            model.load_state_dict(torch.load("../../models/resnet18_5.pt"))
             model.to(device)
             frames = BasicUtil.video2frames(any_video)
-            # print("frames",frames)
+            print("frames",frames)
             # print(len(frames))
             dataset_x = []
             dataset_x = [*dataset_x, *frames]
