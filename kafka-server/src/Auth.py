@@ -20,19 +20,24 @@ class Auth:
         self.producer.flush()
 
     def check(self, msg):
-        event = json.loads(msg.decode('utf-8'))
-        print(event)
-        cvideo = msg['first_video']
-        svideo = msg['any_video']
-        #16 FRAMES
-        frameCvideo = BasicUtil.video2framesSR(cvideo)
-        frameSvideo = BasicUtil.video2framesSR(svideo)
-        face_lo = face_recognition.face_encodings(frameCvideo[0])[0]
-        face_lo2 = face_recognition.face_encodings(frameSvideo[0])[0]
+        try :
+            event = json.loads(msg.decode('utf-8'))
+            print(event)
+            cvideo = event['first_video']
+            svideo = event['any_video']
+            # 16 FRAMES
+            frameCvideo = BasicUtil.video2framesSR(cvideo)
+            frameSvideo = BasicUtil.video2framesSR(svideo)
+            face_lo = face_recognition.face_encodings(frameCvideo[0])[0]
+            face_lo2 = face_recognition.face_encodings(frameSvideo[0])[0]
 
-        matches = face_recognition.compare_faces([face_lo], face_lo2)
-        return matches[0]
-        
+            matches = face_recognition.compare_faces([face_lo], face_lo2)
+            return matches[0]
+            # return True
+        except Exception as e:
+            print(e)
+            return False
+
     def consume(self, topic):
         self.consumer = Consumer(self.confConsumer)
         self.topic = topic
