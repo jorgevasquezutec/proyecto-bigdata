@@ -43,7 +43,7 @@ class FakeDetector:
             device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
             model.fc = nn.Linear(in_features=2048, out_features=len(types), bias=True)
             optimizer = optim.SGD(model.parameters(), lr=1e-4, weight_decay=0.005, momentum=0.9)
-            model.load_state_dict(torch.load("resnet101.pt"))
+            model.load_state_dict(torch.load("../models/resnet101.pt"))
             model.eval()
             model.to(device)
             frames = BasicUtil.video2frames(any_video)
