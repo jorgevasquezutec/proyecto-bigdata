@@ -56,7 +56,12 @@ class Auth:
                 if self.check(value):
                     self.produce('checked', value)
                 else:
-                    self.produce('celery', value)
+                    obj = json.loads(value.decode('utf-8'))
+                    payload = {
+                        "username": obj['username'],
+                        "error" : "Not the same person"
+                    }
+                    self.produce('celery', json.dumps(payload))
                
         except KeyboardInterrupt:
             print("interrupted error ")
