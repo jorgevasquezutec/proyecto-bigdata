@@ -1,17 +1,21 @@
 import { Kafka } from 'kafkajs';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import {BROKERS } from './app.js';
 
 
 const kafka = new Kafka({
     clientId: 'my-app3',
-    brokers: process.env.BROKERS.split(','),
+    brokers: BROKERS,
 });
+
+const consumer = kafka.consumer({ groupId: 'test-group' });
 
 
 export const sendProducer = async (topic, message) => {
-    const producer = kafka.producer();
+    const producer = kafka.producer(
+        {
+            createPartitioner: Kafka.DefaultPartitioner,
+        }
+    );
     await producer.connect();
     await producer.send({
         topic,
@@ -22,10 +26,10 @@ export const sendProducer = async (topic, message) => {
     await producer.disconnect();
 }
 
-export const makeConsumer = async (topic, user) => {
+export const makeConsumerPromise = async (topic, user) => {
 
     return new Promise(async (resolve, reject) => {
-        const consumer = kafka.consumer( {groupId: `consumer-${user._id}`})
+        // const consumer = kafka.consumer( {groupId: `consumer-${user._id}`})
         await consumer.connect()
         await consumer.subscribe({ topics: topic, fromBeginning: true })
         await consumer.run({
@@ -65,4 +69,28 @@ export const makeConsumer = async (topic, user) => {
 
 
     // return consumer
+}
+
+
+export const makeConsumer = async (topic, user = null, callback = null) => {
+    const textError = "Error al consumir el mensaje";
+    await consumer.connect()
+    await consumer.subscribe({ topics: topic, fromBeginning: false })
+    await consumer.run({
+        eachMessage: async ({ topic, partition, message }) => {
+            try {
+                // console.log(message.value)
+                let msg = message.value;
+                if (msg) {
+                    let event = JSON.parse(msg.toString());
+                    console.log("event", event);
+                    if(callback){
+                        callback(event);
+                    }
+                    
+                }
+            } catch (error) {
+                console.log(textError, error);
+            }
+        }})
 }

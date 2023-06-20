@@ -78,26 +78,32 @@ export const login = async (req, res) => {
         });
 
         /*Receive payload from kafka*/
-        const result = await makeConsumer(['checked', 'celery'], user);
-        const consumer = result?.consumer;
-        if (consumer) await consumer.disconnect();
+        // const result = await makeConsumer(['checked', 'celery'], user);
+        // const consumer = result?.consumer;
+        // if (consumer) await consumer.disconnect();
 
         /*Delete any_video s3*/
         // await deleteFile(any_video_key);
 
         /*response to client*/
-        if (result.status) {
-            await removePath(req.file.path);
-            if (result.topic === 'checked') {
-                const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-                delete user.password;
-                return res.status(200).json({ token, user });
-            }
-            return res.status(4001).json({ error: "Error in video process" });
-        }
-        else {
-            throw new Error(result.error)
-        }
+
+        // if (result.status) {
+        //     await removePath(req.file.path);
+        //     if (result.topic === 'checked') {
+        //         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+        //         delete user.password;
+        //         return res.status(200).json({ token, user });
+        //     }
+        //     return res.status(4001).json({ error: "Error in video process" });
+        // }
+        // else {
+        //     throw new Error(result.error)
+        // }
+
+        return res.status(200).json({
+            status: 'in progress',
+            message: 'Please wait for the video to be processed',
+        });
 
     } catch (err) {
         console.log(err);
