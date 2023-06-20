@@ -58,8 +58,13 @@ class Auth:
                 else:
                     obj = json.loads(value.decode('utf-8'))
                     payload = {
-                        "username": obj['username'],
-                        "error" : "Not the same person"
+                        'user_id': obj['user_id'],
+                        'first_video': obj['first_video'],
+                        'any_video': obj['any_video'],
+                        'any_video_key': obj['any_video_key'],
+                        'sessionID': obj['sessionID'],
+                        'file_path': obj['file_path'],
+                        "error" : "No es la misma persona"
                     }
                     self.produce('celery', json.dumps(payload))
                

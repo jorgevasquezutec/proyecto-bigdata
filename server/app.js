@@ -15,6 +15,7 @@ import { Server } from 'socket.io';
 import { createServer } from 'http';
 import socketMidleware from './middleware/index.js'
 import { HANDLERS } from './socket/index.js';
+import { loginCallback } from './services/callback.js';
 
 
 /*CONFIGURATIONS*/
@@ -71,7 +72,7 @@ const startServer = () => {
                         methods: ["GET", "POST"]
                     }
                 });
-                io.use(socketMidleware);
+                io.use( socketMidleware );
                 const onConnection = async (socket) => {
                     console.log('connected to socket!');
                     HANDLERS.forEach((handler) => handler(io, socket));
@@ -80,7 +81,7 @@ const startServer = () => {
                 http.listen(PORT, () => {
                     resolve(PORT);
                 });
-                makeConsumer(['checked', 'celery']).then((consumer) => {
+                makeConsumer(['checked', 'celery'],loginCallback).then((consumer) => {
                     console.log("consumer Running");
                 });
             }

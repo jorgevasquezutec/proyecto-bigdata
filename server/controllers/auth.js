@@ -1,15 +1,10 @@
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 import User from "../models/User.js";
-import { sendProducer, makeConsumer } from "../config/kafka.js";
-import { uploadFile, deleteFile } from "../config/s3.js";
-import dotenv from "dotenv";
+import { sendProducer } from "../config/kafka.js";
+import { uploadFile } from "../config/s3.js";
+import  {API_URL} from "../config/app.js";
 import { removePath } from "../services/util.js";
-
-
-
-dotenv.config();
-
 
 
 
@@ -52,7 +47,7 @@ export const login = async (req, res) => {
     try {
 
         /*Verirfy password */
-        const { email, password } = req.body;
+        const { email, password, sessionID } = req.body;
         const user = await User.findOne({ email: email });
         if (!user) {
             await removePath(req.file.path);
@@ -66,40 +61,21 @@ export const login = async (req, res) => {
 
         const any_video = req.file;
         const any_video_key = any_video.originalname;
+        
 
         /*Upload any_video s3*/
         await uploadFile(any_video);
 
         /*Send payload to kafka*/
         await sendProducer("loginattempt", {
-            username: user.userName,
-            first_video: `${process.env.API_URL}/videos/${user.videoPath}`,
-            any_video: `${process.env.API_URL}/videos/${any_video_key}`,
+            user_id : user._id,
+            first_video: `${API_URL}/videos/${user.videoPath}`,
+            any_video: `${API_URL}/videos/${any_video_key}`,
+            any_video_key: any_video_key,
+            sessionID: sessionID,
+            file_path : req.file.path
         });
-
-        /*Receive payload from kafka*/
-        // const result = await makeConsumer(['checked', 'celery'], user);
-        // const consumer = result?.consumer;
-        // if (consumer) await consumer.disconnect();
-
-        /*Delete any_video s3*/
-        // await deleteFile(any_video_key);
-
-        /*response to client*/
-
-        // if (result.status) {
-        //     await removePath(req.file.path);
-        //     if (result.topic === 'checked') {
-        //         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        //         delete user.password;
-        //         return res.status(200).json({ token, user });
-        //     }
-        //     return res.status(4001).json({ error: "Error in video process" });
-        // }
-        // else {
-        //     throw new Error(result.error)
-        // }
-
+        
         return res.status(200).json({
             status: 'in progress',
             message: 'Please wait for the video to be processed',

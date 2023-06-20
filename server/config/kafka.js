@@ -72,7 +72,7 @@ export const makeConsumerPromise = async (topic, user) => {
 }
 
 
-export const makeConsumer = async (topic, user = null, callback = null) => {
+export const makeConsumer = async (topic, callback = null) => {
     const textError = "Error al consumir el mensaje";
     await consumer.connect()
     await consumer.subscribe({ topics: topic, fromBeginning: false })
@@ -83,9 +83,9 @@ export const makeConsumer = async (topic, user = null, callback = null) => {
                 let msg = message.value;
                 if (msg) {
                     let event = JSON.parse(msg.toString());
-                    console.log("event", event);
+                    // console.log("event", event);
                     if(callback){
-                        callback(event);
+                        callback(event, topic);
                     }
                     
                 }

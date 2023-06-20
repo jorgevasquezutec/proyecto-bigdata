@@ -25,6 +25,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8097,INTERNAL://kafka1:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - bigdata_proyecto_network
   kafka2:
@@ -43,6 +44,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8098,INTERNAL://kafka2:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - bigdata_proyecto_network
   kafka3:
@@ -61,6 +63,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8099,INTERNAL://kafka3:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - bigdata_proyecto_network
   kafka4:
@@ -79,6 +82,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8100,INTERNAL://kafka4:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka4
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     networks:
       - bigdata_proyecto_network
   mongodb:

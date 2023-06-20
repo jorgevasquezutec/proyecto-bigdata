@@ -3,8 +3,9 @@ import crypto from 'crypto';
 
 const randomId = () => crypto.randomBytes(8).toString("hex");
 
-const middleware = async (io, socket) => {
+const middleware = (socket, next) => {
 
+    
     const sessionID = socket.handshake.auth.sessionID;
     if(sessionID){
         const session = InMemorySessionStore.findSession(sessionID);

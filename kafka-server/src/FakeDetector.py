@@ -87,7 +87,12 @@ class FakeDetector:
                 else:
                     obj = json.loads(value.decode('utf-8'))
                     payload = {
-                        'username': obj['username'],
+                        'user_id': obj['user_id'],
+                        'first_video': obj['first_video'],
+                        'any_video': obj['any_video'],
+                        'any_video_key': obj['any_video_key'],
+                        'sessionID': obj['sessionID'],
+                        'file_path': obj['file_path'],
                         'error': "El video no es correcto"
                     }
                     # tmp['error'] = "El video no es correcto"

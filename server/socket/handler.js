@@ -15,6 +15,8 @@ const handler = (io, socket) => {
         userID: socket.userID,
     });
 
+    // console.log(InMemorySessionStore.findAllSessions());
+
     // notify users upon disconnection
     socket.on("disconnect", async () => {
         const matchingSockets = await io.in(socket.userID).allSockets();

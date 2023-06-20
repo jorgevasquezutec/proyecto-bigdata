@@ -1,45 +1,79 @@
 
 import { LockClosedIcon } from '@heroicons/react/20/solid'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import VideoRecorder from 'react-video-recorder'
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from 'react-toastify';
-import { ThreeDots } from  'react-loader-spinner'
+import { ThreeDots } from 'react-loader-spinner'
 import cryptoRandomString from 'crypto-random-string';
 import { ApiLogin } from '../../services/api'
+import socket from '../../services/socket'
 
 
 const coreLogin = async ({ email, password, any_video }) => {
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("password", password);
-      const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
-      formData.append("any_video", any_video, videoName);
-      const res = await ApiLogin(formData);
-      // console.log(res);
-      return {
-        ...res.data,
-        status: true
-      };
-  
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("password", password);
+        const videoName = cryptoRandomString({ length: 64, type: 'alphanumeric' }) + ".webm";
+        formData.append("any_video", any_video, videoName);
+        formData.append("sessionID", localStorage.getItem("sessionID"));
+        const res = await ApiLogin(formData);
+        // console.log(res);
+        return {
+            ...res.data,
+            status: true
+        };
+
     } catch (error) {
-      const errorMessage = error?.response?.data?.error || "Something went wrong";
-      return {
-        error: errorMessage,
-        status: false,
-      }
+        const errorMessage = error?.response?.data?.error || "Something went wrong";
+        return {
+            error: errorMessage,
+            status: false,
+        }
     }
-  }
-  
+}
+
 
 export default function SingIn() {
 
     const [userInfo, setUserInfo] = useState({ email: "", password: "", any_video: null })
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+
+
+    const handleSocket = async () => {
+        console.log("handleSocket");
+        socket.on("login_success", async ({ data, message }) => {
+            console.log(data);
+            const res = await signIn('credentials', {
+                ...data.user,
+                token: data.token,
+                // any_video: test,
+                redirect: false
+            })
+            setLoading(false)
+            console.log(res);
+            if (!res.ok) {
+                toast.error(res.error, {
+                    position: toast.POSITION.TOP_RIGHT
+                })
+                return;
+            }
+            //cuando este listo
+            router.push('/')
+        });
+        socket.on("login_failed", async ({ message }) => {
+            console.log(message);
+            setLoading(false)
+            toast.error(message, {
+                position: toast.POSITION.TOP_RIGHT
+            })
+        });
+    }
+
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -53,29 +87,13 @@ export default function SingIn() {
 
         setLoading(true)
         const data = await coreLogin(userInfo);
-        if(!data.status){
+        if (!data.status) {
             setLoading(false)
             toast.error(data.error, {
                 position: toast.POSITION.TOP_RIGHT
             })
             return;
         }
-        const res = await signIn('credentials', {
-            ...data.user,
-            token: data.token,
-            // any_video: test,
-            redirect: false
-        })
-        setLoading(false)
-        console.log(res);
-        if (!res.ok) {
-            toast.error(res.error, {
-                position: toast.POSITION.TOP_RIGHT
-            })
-            return;
-        }
-        //cuando este listo
-        router.push('/')
     }
 
     const onComplete = (videoBlob) => {
@@ -83,6 +101,10 @@ export default function SingIn() {
         console.log("videoBlob", videoBlob.size)
         setUserInfo({ ...userInfo, any_video: videoBlob })
     }
+
+    useEffect(() => {
+        handleSocket()
+    }, [])
 
 
     return (
@@ -95,7 +117,7 @@ export default function SingIn() {
                 color="rgb(79 70 229)"
                 ariaLabel="three-dots-loading"
                 wrapperStyle={
-                    { position: "absolute", top: "50%", left: "50%" , zIndex: 100}
+                    { position: "absolute", top: "50%", left: "50%", zIndex: 100 }
                 }
                 wrapperClassName=""
                 visible={loading}
