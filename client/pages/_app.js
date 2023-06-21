@@ -20,7 +20,7 @@ function cookieSession() {
     username = generateGlobalCookieValue(); // Replace this with your logic to generate a unique value
     
     // Set the global cookie with an expiration date, for example, 30 days from now
-    document.cookie = serialize('globalCookie', newGlobalCookie, { path: '/', maxAge: 30 * 24 * 60 * 60 });
+    document.cookie = serialize('globalCookie', username, { path: '/', maxAge: 30 * 24 * 60 * 60 });
   }
   socket.auth = { username };
   socket.connect();
