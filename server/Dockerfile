@@ -4,7 +4,8 @@ RUN rm -rf ./*
 COPY package*.json ./
 RUN npm cache clean --force
 RUN npm install --legacy-peer-deps
-RUN npm install
+RUN npm install 
 COPY . .
+RUN mkdir -p /usr/src/app/public/videos
 EXPOSE 3001
 CMD ["npm", "run", "start"]
