@@ -6,20 +6,37 @@ services:
       context : client/
       dockerfile: Dockerfile
     environment:
-      PORT: 3000
+      PORT: 3002
       ALLOWED_ORIGIN : "*"
+      NEXTAUTH_URL: http://localhost:3002
+      JWT_SECRET: taJjttqKPjjHLbLedRP9n0VY7LSD8h1cqy0ZCQFeBno=
+      API_URL: http://localhost:3001
     ports:
-      - "3000:3000"
+      - "3002:3002"
     networks:
       - bigdata_proyecto_network
   server:
     container_name: client_backend
+    depends_on:
+      - mongodb
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka4
     build: 
       context : server/
       dockerfile: Dockerfile
     environment:
       PORT: 3001
       ALLOWED_ORIGIN : "*"
+      MONGO_URL: mongodb://bigdata:bigdata@mongodb:27017/spoofing?retryWrites=true&w=majority
+      JWT_SECRET: taJjttqKPjjHLbLedRP9n0VY7LSD8h1cqy0ZCQFeBno=
+      BROKERS: localhost:8097,localhost:8098,localhost:8099,localhost:8100
+      API_URL: http://localhost:3001
+      AWS_BUCKET_BAME: "webserversi"
+      AWS_BUCKET_REGION: "us-east-2"
+      AWS_ACCESS_KEY: "AKIA4R7SMTENER3R6TOX"
+      AWS_SECRET_KEY: "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"
     ports:
       - "3001:3001"
     networks:
