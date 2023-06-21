@@ -72,7 +72,7 @@ cd server && npm install
 ### levantar server
 
 ```python
-cd server && nodemon index.js
+cd server && nodemon server.js
 
 ```
 
