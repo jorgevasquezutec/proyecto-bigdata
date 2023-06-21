@@ -1,5 +1,29 @@
 version: '3'
 services:
+  client:
+    container_name: client_frontend
+    build: 
+      context : client/
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3000
+      ALLOWED_ORIGIN : "*"
+    ports:
+      - "3000:3000"
+    networks:
+      - bigdata_proyecto_network
+  server:
+    container_name: client_backend
+    build: 
+      context : server/
+      dockerfile: Dockerfile
+    environment:
+      PORT: 3001
+      ALLOWED_ORIGIN : "*"
+    ports:
+      - "3001:3001"
+    networks:
+      - bigdata_proyecto_network
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.1
     container_name: zookeeper
