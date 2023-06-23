@@ -1,0 +1,3 @@
+face_recognition
+confluent_kafka
+python-dotenv

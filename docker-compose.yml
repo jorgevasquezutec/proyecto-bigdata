@@ -2,6 +2,7 @@ version: '3'
 services:
   client:
     container_name: client_frontend
+    hostname: client
     build: 
       context : client/
       dockerfile: Dockerfile
@@ -17,6 +18,7 @@ services:
       - bigdata_proyecto_network
   server:
     container_name: client_backend
+    hostname: server
     depends_on:
       - mongodb
       - kafka1
@@ -31,12 +33,13 @@ services:
       ALLOWED_ORIGIN : "*"
       MONGO_URL: mongodb://bigdata:bigdata@mongodb:27017/spoofing?retryWrites=true&w=majority
       JWT_SECRET: taJjttqKPjjHLbLedRP9n0VY7LSD8h1cqy0ZCQFeBno=
-      BROKERS: localhost:8097,localhost:8098,localhost:8099,localhost:8100
+      BROKERS: 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
       API_URL: http://localhost:3001
       AWS_BUCKET_BAME: "webserversi"
       AWS_BUCKET_REGION: "us-east-2"
       AWS_ACCESS_KEY: "AKIA4R7SMTENER3R6TOX"
       AWS_SECRET_KEY: "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"
+      AWS_CLOUDWATCH_LOG_GROUP: logApp
     ports:
       - "3001:3001"
     networks:
@@ -62,7 +65,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8097,INTERNAL://kafka1:9092
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8097,INTERNAL://kafka1:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -80,7 +83,7 @@ services:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8098,INTERNAL://kafka2:9092
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8098,INTERNAL://kafka2:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka2
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -98,7 +101,7 @@ services:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8099,INTERNAL://kafka3:9092
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8099,INTERNAL://kafka3:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka3
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -116,7 +119,7 @@ services:
       KAFKA_BROKER_ID: 4
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:8100,INTERNAL://kafka4:9092
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8100,INTERNAL://kafka4:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_JMX_HOSTNAME: kafka4
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -125,6 +128,7 @@ services:
   mongodb:
     image: mongo
     container_name: mongodb-spoofing
+    hostname: mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME : root
       MONGO_INITDB_ROOT_PASSWORD : pass12345
@@ -164,7 +168,7 @@ services:
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092
     networks:
       - bigdata_proyecto_network
-      
+
 volumes:
   mongodb-spoofing-data:
     name: mongodb-spoofing-data

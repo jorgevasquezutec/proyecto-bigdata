@@ -1,0 +1,15 @@
+  face-detector:
+    container_name: face-detector
+    hostname: face-detector
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka4
+    build: 
+      context : face-detector/
+      dockerfile: Dockerfile
+    environment:
+      BROKERS : kafka1:8097,kafka2:8098,kafka3:8099,kafka4:8100
+    networks:
+      - bigdata_proyecto_network
