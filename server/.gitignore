@@ -4,3 +4,6 @@ package-lock.json
 public/videos/*
 
 .env
+
+test.sh
+wait-for-it.sh

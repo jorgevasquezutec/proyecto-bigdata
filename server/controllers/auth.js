@@ -36,6 +36,7 @@ export const register = async (req, res) => {
         res.status(201).json(savedUser);
     } catch (err) {
         await unlinkAsync(req.file.path);
+        logger.error(err);
         res.status(500).json({ error: err.message });
     }
 };
@@ -82,7 +83,7 @@ export const login = async (req, res) => {
         });
 
     } catch (err) {
-        console.log(err);
+        logger.error(err);
         await removePath(req.file.path);
         res.status(500).json({ error: err.message });
     }

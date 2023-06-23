@@ -16,6 +16,10 @@ import { createServer } from 'http';
 import socketMidleware from './middleware/index.js'
 import { HANDLERS } from './socket/index.js';
 import { loginCallback } from './services/callback.js';
+import logger from './config/winston.js';
+
+
+global.logger = logger;
 
 
 /*CONFIGURATIONS*/
@@ -61,6 +65,7 @@ const startServer = () => {
             useUnifiedTopology: true,
         }, (error) => {
             if (error) {
+                logger.error(error);
                 reject(error);
             } else {
                 console.log("MongoDB connected");

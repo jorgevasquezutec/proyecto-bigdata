@@ -1,14 +1,18 @@
 
 import fs from 'fs';
 import S3 from 'aws-sdk/clients/s3.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import  {
+  AWS_BUCKET_BAME,
+  AWS_BUCKET_REGION,
+  AWS_ACCESS_KEY,
+  AWS_SECRET_KEY
+} from "./app.js";
 
 
-const bucketName = process.env.AWS_BUCKET_BAME;
-const region = process.env.AWS_BUCKET_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY;
-const secretAccessKey = process.env.AWS_SECRET_KEY;
+const bucketName =AWS_BUCKET_BAME;
+const region = AWS_BUCKET_REGION;
+const accessKeyId = AWS_ACCESS_KEY;
+const secretAccessKey = AWS_SECRET_KEY;
 
 const s3 = new S3({
   region,
