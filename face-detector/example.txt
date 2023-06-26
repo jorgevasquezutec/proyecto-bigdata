@@ -10,6 +10,6 @@
       context : face-detector/
       dockerfile: Dockerfile
     environment:
-      BROKERS : kafka1:8097,kafka2:8098,kafka3:8099,kafka4:8100
+      BROKERS : 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
     networks:
       - bigdata_proyecto_network

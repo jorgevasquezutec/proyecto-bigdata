@@ -3,7 +3,7 @@ import os
 import socket
 from confluent_kafka import Consumer, Producer
 import json
-import BasicUtil
+from BasicUtil import BasicUtil 
 import face_recognition
 
 class Auth:
