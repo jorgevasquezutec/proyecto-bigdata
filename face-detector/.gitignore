@@ -1,3 +1,11 @@
-face-detector-server
-face-detector-server/**
-face-detector-server/**/**
+**/.ipynb_checkpoints
+**/__pycache__/**
+/datasets
+# .env
+.env
+datasets/**
+models/**
+prueba.png
+prueba2.jpg
+response.webm
+**/*.webm
