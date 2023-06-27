@@ -33,6 +33,12 @@ class Auth:
             cvideo = event['first_video']
             svideo = event['any_video']
             # 16 FRAMES
+            #cvideo=http://localhost:3001/videos/tIIgaPo6GV4Fw0UTs11j5S8uZuMbFBRQlbwLY5oRJVwUGmaM8wpWadNp20by7kQ2.webm
+            #replace localhost for server
+            if(os.getenv('ENV') == 'production'):
+                cvideo = cvideo.replace('localhost', 'server')
+                svideo = svideo.replace('localhost', 'server')
+
             frameCvideo = BasicUtil.video2framesSR(cvideo)
             frameSvideo = BasicUtil.video2framesSR(svideo)
             face_lo = face_recognition.face_encodings(frameCvideo[0])[0]

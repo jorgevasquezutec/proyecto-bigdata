@@ -40,6 +40,7 @@ services:
       AWS_ACCESS_KEY: "AKIA4R7SMTENER3R6TOX"
       AWS_SECRET_KEY: "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"
       AWS_CLOUDWATCH_LOG_GROUP: logApp
+      APP_ENV : "production"
     ports:
       - "3001:3001"
     networks:
@@ -166,6 +167,40 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092
+    networks:
+      - bigdata_proyecto_network
+
+  face-detector:
+    container_name: face-detector
+    hostname: face-detector
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka4
+    build: 
+      context : face-detector/
+      dockerfile: Dockerfile
+    environment:
+      BROKERS : 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
+      ENV: "production"
+    networks:
+      - bigdata_proyecto_network
+      
+  face-spoofing:
+    container_name: face-spoofing
+    hostname: face-spoofing
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
+      - kafka4
+    build: 
+      context : face-spoofing/
+      dockerfile: Dockerfile
+    environment:
+      BROKERS : 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
+      ENV: "production"
     networks:
       - bigdata_proyecto_network
 

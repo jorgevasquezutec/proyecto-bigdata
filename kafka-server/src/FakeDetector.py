@@ -61,8 +61,8 @@ class FakeDetector:
                 _, predicted = torch.max(outputs.data, 1)
                 res.append(np.array(predicted.cpu())[0])
             # return st.mode(res) == 0
-            return mode(res)==0
             # print(st.mode(np.array(res)))
+            return mode(res)==0
         except Exception as e:
             print(e)
             return False

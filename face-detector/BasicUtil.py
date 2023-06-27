@@ -33,6 +33,7 @@ class BasicUtil:
             frames.append(frame)
         #assert len(frames)==NUM_FRAMES_PER_VIDEO
         print("cantidad frames: ", len(frames))
+        cap.release()
         return np.array(frames)
 
     @staticmethod
@@ -58,4 +59,5 @@ class BasicUtil:
             frames.append(frame)
         #assert len(frames)==NUM_FRAMES_PER_VIDEO
         print("video2frames: ", len(frames))
+        cap.release()
         return np.array(frames)

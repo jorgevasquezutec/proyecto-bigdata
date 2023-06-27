@@ -1,15 +1,16 @@
 
 import fs from 'fs';
 import S3 from 'aws-sdk/clients/s3.js';
+import logger from './winston.js';
 import  {
-  AWS_BUCKET_BAME,
+  AWS_BUCKET_NAME,
   AWS_BUCKET_REGION,
   AWS_ACCESS_KEY,
   AWS_SECRET_KEY
 } from "./app.js";
 
 
-const bucketName =AWS_BUCKET_BAME;
+const bucketName =AWS_BUCKET_NAME;
 const region = AWS_BUCKET_REGION;
 const accessKeyId = AWS_ACCESS_KEY;
 const secretAccessKey = AWS_SECRET_KEY;
@@ -44,15 +45,25 @@ export async function uploadFile(file) {
 // downloads a file from s3
 export function getFileStreamContentType(fileKey, contentType,res) {
 
-  const downloadParams = {
-    Key: fileKey,
-    Bucket: bucketName,
-    ResponseContentType: contentType
+  try {
+
+    const downloadParams = {
+      Key: fileKey,
+      Bucket: bucketName,
+      ResponseContentType: contentType
+    }
+    const readStream = s3.getObject(downloadParams).createReadStream();
+
+    // readStream.on('error', function () {
+    //   res.status(404).send('File not found');
+    // });
+
+    return readStream;
+    
+  } catch (error) {
+    logger.error(error);
+    res.status(404).send('File not found');    
   }
-  return s3.getObject(downloadParams).createReadStream().on('error', function () {
-    res.status(404).send('File not found');
-   })
-  // .pipe(res);
 
 }
 

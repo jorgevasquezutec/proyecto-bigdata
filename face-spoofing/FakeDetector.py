@@ -4,6 +4,7 @@ from statistics import mode
 import torch.optim as optim
 from typing import List, Dict, Union
 
+
 targets: Dict[str, int] = {"1": 0, "2": 0, "3": 1, "4": 1, "5": 2, "6": 2, \
     "7": 3, "8": 3, "HR_1": 0, "HR_2": 1, "HR_3": 2, "HR_4": 3}
 types: List[str] = set(targets.values())
@@ -36,14 +37,16 @@ class FakeDetector:
             event = json.loads(msg.decode('utf-8'))
             # any_video = 'response.webm'
             any_video = event['any_video']
+            if(os.getenv('ENV') == 'production'):
+                any_video = any_video.replace('localhost', 'server')
             # any_video = '../datasets/test_release/1/3.avi'
             model = torchvision.models.resnet101(pretrained=True)
             for e in model.parameters():
                 e.requires_grad = False
             device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
             model.fc = nn.Linear(in_features=2048, out_features=len(types), bias=True)
-            optimizer = optim.SGD(model.parameters(), lr=1e-4, weight_decay=0.005, momentum=0.9)
-            model.load_state_dict(torch.load("../models/resnet101.pt"))
+            # optimizer = optim.SGD(model.parameters(), lr=1e-4, weight_decay=0.005, momentum=0.9)
+            model.load_state_dict(torch.load("./models/resnet101.pt", map_location=device))
             model.eval()
             model.to(device)
             frames = BasicUtil.video2frames(any_video)
@@ -61,8 +64,8 @@ class FakeDetector:
                 _, predicted = torch.max(outputs.data, 1)
                 res.append(np.array(predicted.cpu())[0])
             # return st.mode(res) == 0
-            return mode(res)==0
             # print(st.mode(np.array(res)))
+            return mode(res)==0
         except Exception as e:
             print(e)
             return False

@@ -25,14 +25,15 @@ class BasicUtil:
             is_there_frame, frame = cap.read()
             if frame is None: 
                 return np.array([])
-            if idf % resampling_rate == 0:
+            #if idf % resampling_rate == 0:
                 # grayscale
                 # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # resize
-                frame = cv2.resize(frame, resize)
-                frames.append(frame)
+            frame = cv2.resize(frame, resize)
+            frames.append(frame)
         #assert len(frames)==NUM_FRAMES_PER_VIDEO
         print("cantidad frames: ", len(frames))
+        cap.release()
         return np.array(frames)
 
     @staticmethod
@@ -50,12 +51,13 @@ class BasicUtil:
             is_there_frame, frame = cap.read()
             if frame is None: 
                 return np.array([])
-            if idf % resampling_rate == 0:
+            #if idf % resampling_rate == 0:
                 # grayscale
                 # frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 # resize
                 # frame = cv2.resize(frame, resize)
-                frames.append(frame)
+            frames.append(frame)
         #assert len(frames)==NUM_FRAMES_PER_VIDEO
         print("video2frames: ", len(frames))
+        cap.release()
         return np.array(frames)
