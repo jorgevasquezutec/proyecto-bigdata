@@ -12,3 +12,5 @@ export const AWS_ACCESS_KEY = process.env.AWS_ACCESS_KEY;
 export const AWS_SECRET_KEY = process.env.AWS_SECRET_KEY;
 export const AWS_CLOUDWATCH_LOG_GROUP = process.env.AWS_CLOUDWATCH_LOG_GROUP;
 export const APP_ENV = process.env.APP_ENV;
+export const TOPICS = process.env.TOPICS.split(',');
+export const TOPICS2= process.env.TOPICS2.split(',');

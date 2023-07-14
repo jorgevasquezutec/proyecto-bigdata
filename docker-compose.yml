@@ -3,15 +3,18 @@ services:
   client:
     container_name: client_frontend
     hostname: client
+    depends_on:
+      - kafka
+      - server
     build: 
       context : client/
       dockerfile: Dockerfile
     environment:
       PORT: 3002
       ALLOWED_ORIGIN : "*"
-      NEXTAUTH_URL: http://localhost:3002
-      JWT_SECRET: taJjttqKPjjHLbLedRP9n0VY7LSD8h1cqy0ZCQFeBno=
-      API_URL: http://localhost:3001
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      API_URL: ${API_URL}
     ports:
       - "3002:3002"
     networks:
@@ -20,27 +23,23 @@ services:
     container_name: client_backend
     hostname: server
     depends_on:
-      - mongodb
-      - kafka1
-      - kafka2
-      - kafka3
-      - kafka4
+      - kafka
     build: 
       context : server/
       dockerfile: Dockerfile
     environment:
       PORT: 3001
       ALLOWED_ORIGIN : "*"
-      MONGO_URL: mongodb://bigdata:bigdata@mongodb:27017/spoofing?retryWrites=true&w=majority
-      JWT_SECRET: taJjttqKPjjHLbLedRP9n0VY7LSD8h1cqy0ZCQFeBno=
-      BROKERS: 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
-      API_URL: http://localhost:3001
-      AWS_BUCKET_BAME: "webserversi"
-      AWS_BUCKET_REGION: "us-east-2"
-      AWS_ACCESS_KEY: "AKIA4R7SMTENER3R6TOX"
-      AWS_SECRET_KEY: "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"
-      AWS_CLOUDWATCH_LOG_GROUP: logApp
-      APP_ENV : "production"
+      MONGO_URL: ${MONGO_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      BROKERS: ${BROKERS}
+      API_URL: ${API_URL}
+      AWS_BUCKET_BAME: ${AWS_BUCKET_BAME}
+      AWS_BUCKET_REGION: ${AWS_BUCKET_REGION}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_CLOUDWATCH_LOG_GROUP: ${AWS_CLOUDWATCH_LOG_GROUP}
+      APP_ENV : ${APP_ENV}
     ports:
       - "3001:3001"
     networks:
@@ -54,10 +53,10 @@ services:
     networks:
         - bigdata_proyecto_network
     tmpfs: "/datalog"
-  kafka1:
+  kafka:
     image: confluentinc/cp-server:7.2.1
-    container_name: kafka1
-    hostname: kafka1
+    container_name: kafka-cloud
+    hostname: kafka
     ports:
       - "8097:8097"
     depends_on:
@@ -66,97 +65,10 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8097,INTERNAL://kafka1:9092
+      KAFKA_ADVERTISED_LISTENERS: ${KAFKA_ADVERTISED_LISTENERS}
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_JMX_HOSTNAME: kafka1
+      KAFKA_JMX_HOSTNAME: kafka
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - bigdata_proyecto_network
-  kafka2:
-    image: confluentinc/cp-server:7.2.1
-    container_name: kafka2
-    hostname: kafka2
-    ports:
-      - "8098:8098"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8098,INTERNAL://kafka2:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_JMX_HOSTNAME: kafka2
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - bigdata_proyecto_network
-  kafka3:
-    image: confluentinc/cp-server:7.2.1
-    container_name: kafka3
-    hostname: kafka3
-    ports:
-      - "8099:8099"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 3
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8099,INTERNAL://kafka3:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_JMX_HOSTNAME: kafka3
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - bigdata_proyecto_network
-  kafka4:
-    image: confluentinc/cp-server:7.2.1
-    container_name: kafka4
-    hostname: kafka4
-    ports:
-      - "8100:8100"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_BROKER_ID: 4
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: EXTERNAL:PLAINTEXT,INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://192.168.0.15:8100,INTERNAL://kafka4:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-      KAFKA_JMX_HOSTNAME: kafka4
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - bigdata_proyecto_network
-  mongodb:
-    image: mongo
-    container_name: mongodb-spoofing
-    hostname: mongodb
-    environment:
-      MONGO_INITDB_ROOT_USERNAME : root
-      MONGO_INITDB_ROOT_PASSWORD : pass12345
-      MONGO_INITDB_DATABASE: spoofing
-    volumes:
-      - mongodb-spoofing-data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    networks:
-      - bigdata_proyecto_network
-    ports:
-      - 27017:27017
-  kafka-init-topics:
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - kafka4
-    command: "bash -c 'echo Waiting for Kafka to be ready... && \
-               cub kafka-ready -b kafka1:9092 1 30 && \
-               cub kafka-ready -b kafka2:9092 1 30 && \
-               cub kafka-ready -b kafka3:9092 1 30 && \
-               cub kafka-ready -b kafka4:9092 1 30 && \
-               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic loginattempt --partitions 3 --replication-factor 1 --if-not-exists  && \
-               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic filtered --partitions 3 --replication-factor 1 --if-not-exists  && \
-               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic celery --partitions 3 --replication-factor 1 --if-not-exists && \
-               kafka-topics --create --bootstrap-server kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092  --topic checked --partitions 3 --replication-factor 1 --if-not-exists'"
     networks:
       - bigdata_proyecto_network
   kafka-ui:
@@ -165,8 +77,8 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka1:9092,kafka2:9092,kafka3:9092,kafka4:9092
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: ${KAFKA_ADVERTISED_LISTENERS}
     networks:
       - bigdata_proyecto_network
 
@@ -174,16 +86,13 @@ services:
     container_name: face-detector
     hostname: face-detector
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - kafka4
+      - kafka
     build: 
       context : face-detector/
       dockerfile: Dockerfile
     environment:
-      BROKERS : 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
-      ENV: "production"
+      BROKERS : ${BROKERS}
+      ENV: ${APP_ENV}
     networks:
       - bigdata_proyecto_network
       
@@ -191,24 +100,16 @@ services:
     container_name: face-spoofing
     hostname: face-spoofing
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
-      - kafka4
+      - kafka
     build: 
       context : face-spoofing/
       dockerfile: Dockerfile
     environment:
-      BROKERS : 192.168.0.15:8097,192.168.0.15:8098,192.168.0.15:8099,192.168.0.15:8100
-      ENV: "production"
+      BROKERS : ${BROKERS}
+      ENV: ${APP_ENV}
     networks:
       - bigdata_proyecto_network
 
-volumes:
-  mongodb-spoofing-data:
-    name: mongodb-spoofing-data
-
 networks:
   bigdata_proyecto_network:
-    name: bigdata_proyecto_network
     driver: bridge

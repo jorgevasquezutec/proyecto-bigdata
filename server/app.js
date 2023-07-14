@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { register, login } from './controllers/auth.js';
 import { getFile } from './controllers/util.js';
 import { MONGO_URL, PORT } from './config/app.js';
-import { makeConsumer } from './config/kafka.js';
+import { makeConsumer, createTopicIfNotExists } from './config/kafka.js';
 import { Server } from 'socket.io';
 import { createServer } from 'http';
 import socketMidleware from './middleware/index.js'
@@ -63,7 +63,7 @@ const startServer = () => {
         mongoose.connect(MONGO_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
-        }, (error) => {
+        }, async (error) => {
             if (error) {
                 logger.error(error);
                 reject(error);
@@ -86,6 +86,11 @@ const startServer = () => {
                 http.listen(PORT, () => {
                     resolve(PORT);
                 });
+
+                await createTopicIfNotExists().then((res) => {}).catch((err) => {
+                    console.log(err);
+                });
+
                 makeConsumer(['checked', 'celery'],loginCallback).then((consumer) => {
                     console.log("consumer Running");
                 });
