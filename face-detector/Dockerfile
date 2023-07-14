@@ -6,7 +6,6 @@ RUN apt-get update && \
     libswscale-dev libv4l-dev libxvidcore-dev libx264-dev \
     libatlas-base-dev gfortran libhdf5-dev libhdf5-serial-dev libhdf5-103
 
-
 WORKDIR /usr/src/app
 
 COPY requirements.txt ./

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spoofing-deployment
+  labels:
+    app: spoofing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spoofing
+  template:
+    metadata:
+      labels:
+        app: spoofing 
+    spec:
+      containers:
+      - name: spoofing
+        image: jorgevasquezutec/cloud-spoofing
+        ports:
+        - containerPort: 3004
+        env:
+        - name: BROKERS
+          value: "one-node-cluster.redpanda:9092"
+        - name: ENV
+          value: "production"
+        - name: HOSTNAME_SERVER
+          value: "server-service"
+

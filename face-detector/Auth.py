@@ -8,15 +8,16 @@ import face_recognition
 
 class Auth:
     def __init__(self):
-        servers = os.getenv('BROKERS')
+        self.servers = os.getenv('BROKERS')
+        self.hostname_server = os.getenv('HOSTNAME_SERVER')
         self.confConsumer = {
-            'bootstrap.servers': servers,
+            'bootstrap.servers': self.servers,
             'group.id': 'auth',
             'max.poll.interval.ms': '500000',
             'session.timeout.ms': '120000'
         }
         self.confProducer = {
-            'bootstrap.servers': servers,
+            'bootstrap.servers': self.servers,
             'client.id': socket.gethostname()+'-auth',
             'request.timeout.ms': '120000'
         }
@@ -36,8 +37,8 @@ class Auth:
             #cvideo=http://localhost:3001/videos/tIIgaPo6GV4Fw0UTs11j5S8uZuMbFBRQlbwLY5oRJVwUGmaM8wpWadNp20by7kQ2.webm
             #replace localhost for server
             if(os.getenv('ENV') == 'production'):
-                cvideo = cvideo.replace('localhost', 'server')
-                svideo = svideo.replace('localhost', 'server')
+                cvideo = cvideo.replace('localhost', self.hostname_server)
+                svideo = svideo.replace('localhost', self.hostname_server)
 
             frameCvideo = BasicUtil.video2framesSR(cvideo)
             frameSvideo = BasicUtil.video2framesSR(svideo)

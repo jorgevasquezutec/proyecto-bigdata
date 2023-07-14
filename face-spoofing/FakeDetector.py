@@ -11,16 +11,17 @@ types: List[str] = set(targets.values())
 
 class FakeDetector:
     def __init__(self):
-        servers = os.getenv('BROKERS')
+        self.servers = os.getenv('BROKERS')
+        self.hostname_server = os.getenv('HOSTNAME_SERVER')
         self.confConsumer = {
-            'bootstrap.servers': servers,
+            'bootstrap.servers': self.servers,
             'group.id': 'fake-detector',
             'max.poll.interval.ms': '500000',
             'session.timeout.ms': '120000',
         }
 
         self.confProducer = {
-            'bootstrap.servers': servers,
+            'bootstrap.servers': self.servers,
             'client.id': socket.gethostname()+'-fake-detector',
             'request.timeout.ms': '120000'
         }
@@ -38,7 +39,7 @@ class FakeDetector:
             # any_video = 'response.webm'
             any_video = event['any_video']
             if(os.getenv('ENV') == 'production'):
-                any_video = any_video.replace('localhost', 'server')
+                any_video = any_video.replace('localhost', self.hostname_server)
             # any_video = '../datasets/test_release/1/3.avi'
             model = torchvision.models.resnet101(pretrained=True)
             for e in model.parameters():
