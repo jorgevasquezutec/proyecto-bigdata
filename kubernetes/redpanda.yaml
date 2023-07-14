@@ -1,7 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redpanda
+
+---
+
 apiVersion: redpanda.vectorized.io/v1alpha1
 kind: Cluster
 metadata:
   name: one-node-cluster
+  namespace: redpanda
 spec:
   image: "redpandadata/redpanda"
   version: "latest"
