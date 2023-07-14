@@ -23,7 +23,7 @@ spec:
         - name: API_URL
           value: "http://192.168.49.2:30001"
         - name: NEXTAUTH_URL
-          value: "http://localhost:3000"
+          value: "http://192.168.49.2:30000"
 
 ---
 
