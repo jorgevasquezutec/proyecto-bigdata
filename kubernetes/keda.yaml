@@ -1,0 +1,25 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: consumer-scaled
+spec:
+  scaleTargetRef:
+    name: spoofing-deployment #(1)
+  cooldownPeriod: 30 # (2)
+  maxReplicaCount:  5 # (3)
+  advanced:
+    horizontalPodAutoscalerConfig: # (4)
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 30
+          policies:
+            - type: Percent
+              value: 50
+              periodSeconds: 30
+  triggers: # (5)
+    - type: kafka
+      metadata:
+        bootstrapServers: one-node-cluster.redpanda:9092
+        consumerGroup: fake-detector
+        topic: loginattempt
+        lagThreshold: '5'
