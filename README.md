@@ -2,93 +2,36 @@
 # Soft real time anti spoofing
 
 
+## Diagrama 
 ![alt text](proyecto.png)
+
+## Arquitectura Kubernetes
+![alt text](diagrama.jpeg)
+
 
 
 [Dataset](https://www.dropbox.com/s/aaz282d9wyst0w8/CASIA_faceAntisp.rar
+
 )
 
 
-NOTA: si no tienes instalado nodemon ejecuta
+## Levantar Proyecto Docker
 
 ```python
- npm i -g nodemon
+docker-compose up -d --build
 ```
 
----
-
-## Paso 1: Levantar docker:kafka,kafaui,mongo,kafa-topic-init
+## Levantar Eks o minikube
 
 ```python
-docker-compose up -d
+make kub-create-all
 ```
 
+## Consideraciones de Instalacion previo Levantar Eks
 
----
-## Paso 2:  levantar spoofing-kafka-server
+[KEDA](https://keda.sh/)
 
+[Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
 
-### create env
+[RedPanda](https://redpanda.com/)
 
-```python
-conda env create -f environment.yml
-```
-
-### activate env
-
-```python
-conda activate spoofing-kafka
-```
-
-### install dependencys
-
-```python
-make pip-tools
-```
-
-### ejecutar Auth
-
-```python
-cd kafka-server/src && python Auth.py
-```
-
-### ejecutar FakeDetector
-
-```python
-cd kafka-server/src && python Auth.py
-```
-
----
-
-## Paso 3: Levantar server
-
-### instalar dependencias
-
-```python
-cd server && npm install
-
-```
-
-### levantar server
-
-```python
-cd server && nodemon server.js
-
-```
-
----
-## Paso 4 : Levantar front
-
-
-### instalar dependencias
-
-```python
-cd client && npm install
-
-```
-
-### levantar server
-
-```python
-cd client && npm run dev
-```
