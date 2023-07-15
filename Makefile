@@ -17,7 +17,7 @@ push-hub-detector:
 
 
 kub-redpanda:
-	kubectl create -f kubernetes/redpanda.yaml
+	kubectl apply -f kubernetes/redpanda.yaml
 
 kub-delete-redpanda:
 	kubectl delete -f kubernetes/redpanda.yaml
@@ -29,13 +29,24 @@ kub-delete-all:
 	kubectl delete -f kubernetes/cloud-front.yaml
 
 kub-create-all:
-	kubectl create -f kubernetes/cloud-server.yaml
-	kubectl create -f kubernetes/cloud-front.yaml
-	kubectl create -f kubernetes/face-spoofing.yaml
-	kubectl create -f kubernetes/face-detector.yaml
+	kubectl apply -f kubernetes/cloud-server.yaml
+	kubectl apply -f kubernetes/cloud-front.yaml
+	kubectl apply -f kubernetes/face-spoofing.yaml
+	kubectl apply -f kubernetes/face-detector.yaml
+
+
+kub-create-fb:
+	kubectl apply -f kubernetes/cloud-server.yaml
+	kubectl apply -f kubernetes/cloud-front.yaml
+	kubectl apply -f kubernetes/ingress-service.yaml
+
+kub-del-fb:
+	kubectl delete -f kubernetes/cloud-server.yaml
+	kubectl delete -f kubernetes/cloud-front.yaml
+	kubectl delete -f kubernetes/ingress-service.yaml
 
 kub-keda:
-	kubectl create -f kubernetes/keda.yaml
+	kubectl apply -f kubernetes/keda.yaml
 
 kub-delete-keda:
 	kubectl delete -f kubernetes/keda.yaml

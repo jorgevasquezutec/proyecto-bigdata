@@ -29,16 +29,20 @@ export const loginCallback = async (event, topic) => {
         // }
         if (topic === 'checked') {
             // console.log("checked", event);
-            io.to(session.userID).emit("login_success", {
-                message: "Video procesado correctamente",
-                data: await getLoginInfo(user_id)
-            });
+            if(session){
+                io.to(session.userID).emit("login_success", {
+                    message: "Video procesado correctamente",
+                    data: await getLoginInfo(user_id)
+                });
+            }
         }
         if (topic === 'celery') {
             // console.log("celery", event);
-            io.to(session.userID).emit("login_failed", {
-                message: event.error || "Ocurrio un error al procesar el video"
-            });
+            if(session){
+                io.to(session.userID).emit("login_failed", {
+                    message: event.error || "Ocurrio un error al procesar el video"
+                });
+            }
         }
 
     } catch (error) {

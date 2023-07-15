@@ -19,6 +19,7 @@ spec:
         image: jorgevasquezutec/cloud-server
         ports:
         - containerPort: 3001
+        imagePullPolicy: Always
 
 ---
 

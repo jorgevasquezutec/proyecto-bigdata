@@ -18,13 +18,12 @@ spec:
       - name: front
         image: jorgevasquezutec/cloud-front
         ports:
-        - containerPort: 80
-        env:
-        - name: API_URL
-          value: "http://192.168.49.2:30001"
-        - name: NEXTAUTH_URL
-          value: "http://192.168.49.2:30000"
+        - containerPort: 3002
         imagePullPolicy: Always
+        env:
+        - name: PORT
+          value: "3002"
+          
 
 ---
 
@@ -38,5 +37,5 @@ spec:
   type: NodePort
   ports:
   - protocol: TCP
-    port: 3000
-    targetPort: 80
+    port: 3002
+    targetPort: 3002
