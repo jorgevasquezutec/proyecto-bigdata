@@ -7,9 +7,9 @@ spec:
     name: spoofing-deployment #(1)
   cooldownPeriod: 30 # (2)
   maxReplicaCount:  5 # (3)
-  minReplicaCount:  1
+  minReplicaCount:  1 #(4)
   advanced:
-    horizontalPodAutoscalerConfig: # (4)
+    horizontalPodAutoscalerConfig: # (5)
       behavior:
         scaleDown:
           stabilizationWindowSeconds: 300
@@ -17,7 +17,7 @@ spec:
             - type: Percent
               value: 50
               periodSeconds: 300
-  triggers: # (5)
+  triggers: # (6)
     - type: kafka
       metadata:
         bootstrapServers: one-node-cluster.redpanda:9092

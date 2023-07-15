@@ -89,13 +89,19 @@ const startServer = () => {
                     resolve(PORT);
                 });
 
-                await createTopicIfNotExists().then((res) => {}).catch((err) => {
-                    console.log(err);
-                });
+                try {
 
-                makeConsumer(['checked', 'celery'],loginCallback).then((consumer) => {
-                    console.log("consumer Running");
-                });
+                    await createTopicIfNotExists().then((res) => {}).catch((err) => {
+                        console.log(err);
+                    });
+
+                    makeConsumer(['checked', 'celery'],loginCallback).then((consumer) => {
+                        console.log("consumer Running");
+                    });
+
+                }catch(err){
+                    console.log(err);
+                }
             }
         });
     });

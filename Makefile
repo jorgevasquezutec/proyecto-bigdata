@@ -23,16 +23,21 @@ kub-delete-redpanda:
 	kubectl delete -f kubernetes/redpanda.yaml
 
 kub-delete-all:
+	kubectl delete -f kubernetes/redpanda.yaml
 	kubectl delete -f kubernetes/face-spoofing.yaml
 	kubectl delete -f kubernetes/face-detector.yaml
 	kubectl delete -f kubernetes/cloud-server.yaml
 	kubectl delete -f kubernetes/cloud-front.yaml
+	kubectl delete -f kubernetes/ingress-service.yaml 
+	
 
 kub-create-all:
+	kubectl apply -f kubernetes/redpanda.yaml
 	kubectl apply -f kubernetes/cloud-server.yaml
 	kubectl apply -f kubernetes/cloud-front.yaml
 	kubectl apply -f kubernetes/face-spoofing.yaml
 	kubectl apply -f kubernetes/face-detector.yaml
+	kubectl apply -f kubernetes/ingress-service.yaml 
 
 
 kub-create-fb:

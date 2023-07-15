@@ -10,41 +10,35 @@ const kafka = new Kafka({
 const consumer = kafka.consumer({ groupId: 'test-group' });
 
 
+
+const createTopics = async (topics, numPartitions ,topicList , admin) => {
+    if (topics.every((topic) => topicList.includes(topic))) {
+        console.log(`Topic ${topics.join(",")} already exists`);
+    } else {
+        const newTopics = topics.map((topic) => ({
+            topic: topic,
+            numPartitions: numPartitions,
+        }));
+
+        await admin.createTopics({
+            topics: newTopics,
+        });
+
+        console.log(`Topic ${topics.join(",")} created`);
+    }
+}
+
 export const createTopicIfNotExists = async () => {
 
     const admin = kafka.admin();
     await admin.connect();
     //List Topic
     const topicList = await admin.listTopics();
-    //TOPIC = ['topic1', 'topic2']
-    //TOPIC2 = ['topic1', 'topic2', 'topic3']
-    if (TOPICS.every((topic) => topicList.includes(topic))) {
-        console.log(`Topic ${TOPICS.join(",")} already exists`);
-    } else {
-        await admin.createTopics({
-            topics: TOPICS.map((topic) => {
-                return {
-                    topic : topic,
-                    numPartitions: 1,
-                };
-            }),
-        });
-        console.log(`Topic ${TOPICS.join(",")} created`);
-    }
 
-    if (TOPICS2.every((topic) => topicList.includes(topic))) {
-        console.log(`Topic ${TOPICS2.join(",")} already exists`);
-    }else {
-        await admin.createTopics({
-            topics: TOPICS2.map((topic) => {
-                return {
-                    topic : topic,
-                    numPartitions: 5,
-                };
-            }),
-        });
-        console.log(`Topic ${TOPICS2.join(",")} created`);
-    }
+    await Promise.all([
+        createTopics(TOPICS, 1, topicList, admin),
+        createTopics(TOPICS2, 5, topicList, admin)
+    ])
 
     await admin.disconnect();
 }
