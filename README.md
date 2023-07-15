@@ -21,17 +21,28 @@
 docker-compose up -d --build
 ```
 
-## Levantar Eks o minikube
 
-```python
-make kub-create-all
-```
+## Crear Cluster EKS
+- export AWS_PROFILE=user1 # The name of the profile you want to use
+- cd k8s/ && ./create-vpc-stack.sh
+- cd k8s/ && ./create-eks-stack.sh
 
-## Consideraciones de Instalacion previo Levantar Eks
+
+
+## Consideraciones de Instalacion previas
 
 [KEDA](https://keda.sh/)
 
 [Ingress-Nginx Controller](https://kubernetes.github.io/ingress-nginx/deploy/#quick-start)
 
 [RedPanda](https://redpanda.com/)
+
+
+
+## Levantar Eks o minikube
+
+```python
+make kub-create-all
+```
+
 
