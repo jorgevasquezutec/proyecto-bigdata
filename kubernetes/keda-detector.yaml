@@ -4,7 +4,7 @@ metadata:
   name: detector-scaled
 spec:
   scaleTargetRef:
-    name: detector-deployment #(1)
+    name: detector #(1)
   cooldownPeriod: 30 # (2)
   maxReplicaCount:  5 # (3)
   minReplicaCount:  1
@@ -12,11 +12,11 @@ spec:
     horizontalPodAutoscalerConfig: # (4)
       behavior:
         scaleDown:
-          stabilizationWindowSeconds: 120
+          stabilizationWindowSeconds: 300
           policies:
             - type: Percent
               value: 50
-              periodSeconds: 120
+              periodSeconds: 300
   triggers: # (5)
     - type: kafka
       metadata:

@@ -23,6 +23,8 @@ spec:
         env:
         - name: PORT
           value: "3002"
+        - name: NEXTAUTH_URL
+          value: "http://a604756e76b7d41409212bc27eb31e09-81873862.us-east-1.elb.amazonaws.com"
           
 
 ---
