@@ -1,8 +1,13 @@
 import { io } from "socket.io-client";
-import getConfig from "next/config";
 
-const API_URL = getConfig().publicRuntimeConfig.APIURL;
-const socket = io(API_URL, { autoConnect: false });
+
+// const API = "http://localhost/server/";
+// console.log(API)
+
+const socket = io("", { 
+  autoConnect: false,
+  rejectUnauthorized: false
+});
 
 socket.onAny((event, ...args) => {
   console.log(event, args);

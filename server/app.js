@@ -50,7 +50,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 /*ROUTERS*/
-
+app.get("/", (req, res) => {
+    res.send("Api cloud");
+});
 app.post("/auth/signup", upload.single("first_video"), register)
 app.use("/auth/login", upload.single("any_video"), login);
 app.get("/videos/:key", getFile);

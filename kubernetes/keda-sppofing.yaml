@@ -1,21 +1,22 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: consumer-scaled
+  name: spoofing-scaled
 spec:
   scaleTargetRef:
     name: spoofing-deployment #(1)
   cooldownPeriod: 30 # (2)
   maxReplicaCount:  5 # (3)
+  minReplicaCount:  1
   advanced:
     horizontalPodAutoscalerConfig: # (4)
       behavior:
         scaleDown:
-          stabilizationWindowSeconds: 30
+          stabilizationWindowSeconds: 120
           policies:
             - type: Percent
               value: 50
-              periodSeconds: 30
+              periodSeconds: 120
   triggers: # (5)
     - type: kafka
       metadata:

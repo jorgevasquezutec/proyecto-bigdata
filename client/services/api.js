@@ -6,7 +6,7 @@ const header = {
         'Content-Type': 'application/json',
     }
 }
-const API_URL = getConfig().publicRuntimeConfig.APIURL;
+const API_URL = getConfig().publicRuntimeConfig.API_URL;
 
 
 export const ApiRegister = async (paylaod) => {

@@ -29,10 +29,10 @@ kub-delete-all:
 	kubectl delete -f kubernetes/cloud-front.yaml
 
 kub-create-all:
-	kubectl create -f kubernetes/face-spoofing.yaml
-	kubectl create -f kubernetes/face-detector.yaml
 	kubectl create -f kubernetes/cloud-server.yaml
 	kubectl create -f kubernetes/cloud-front.yaml
+	kubectl create -f kubernetes/face-spoofing.yaml
+	kubectl create -f kubernetes/face-detector.yaml
 
 kub-keda:
 	kubectl create -f kubernetes/keda.yaml
