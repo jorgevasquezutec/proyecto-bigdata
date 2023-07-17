@@ -14,6 +14,8 @@
 
 )
 
+[Presentación](https://docs.google.com/presentation/d/1tR9aePQBPbU6dZLiYqg30D4OW4wAIOtA-OHbsC2v7YQ/edit?usp=sharing)
+
 
 ## Levantar Proyecto Docker
 
